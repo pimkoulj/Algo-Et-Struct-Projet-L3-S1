@@ -14,12 +14,14 @@ class GameParameters
     private int matrix_size_;
     private int star_cardinal_;
     private int tile_size_;
+    private int border_size_;
     
     public GameParameters(int matsize, int stars, int tsize)
     {
         matrix_size_ = matsize;
         star_cardinal_ = stars;
         tile_size_ = tsize;
+        border_size_ = 2;
     }
 
     public GameParameters()
@@ -30,6 +32,13 @@ class GameParameters
     public int matrixSize() { return matrix_size_; }
     public int starCardinal() { return star_cardinal_; }
     public int tileSize() { return tile_size_; }
+    public int borderSize() {return border_size_; }
+
+    public void setMatrixSize(int new_mat_size) { matrix_size_ = new_mat_size; }
+    public void setStarCardinal(int new_star_card) { star_cardinal_ = new_star_card; }
+    public void setTileSize(int new_tile_size) { tile_size_ = new_tile_size;}
+    public void setBorderSize(int new_border_size) { border_size_ = new_border_size; }
+
 
 }
 
@@ -43,8 +52,13 @@ class Board extends JPanel implements MouseListener
     
     public Board()
     {
+        this(new GameParameters());//charge les parametres par defaut
+    }
+
+    public Board(GameParameters params)
+    {
+        params_ = params;
         turn = 0;
-        params_ = new GameParameters();
         matrix_ = new Matrix(params_.matrixSize());
         
         initialiseStarTiles();
@@ -94,9 +108,9 @@ class Board extends JPanel implements MouseListener
             for(int j = 0 ; j < matrix_.size() ; ++j)
             {
                 g.setColor(matrix_.get(i, j).getColor());
-                if((mousePos != null && mousePos.x / (params_.tileSize() + 2) == i && mousePos.y / (params_.tileSize() + 2) == j)) 	
+                if((mousePos != null && mousePos.x / (params_.tileSize() + params_.borderSize()) == i && mousePos.y / (params_.tileSize() + params_.borderSize()) == j)) 	
                     g.setColor(turn%2 == 0 ? Color.RED : Color.BLUE);
-                g.fillRect(i*params_.tileSize() + 2 * i, j*params_.tileSize() + 2 * j, params_.tileSize(), params_.tileSize());
+                g.fillRect(i*params_.tileSize() + params_.borderSize() * i, j*params_.tileSize() + params_.borderSize() * j, params_.tileSize(), params_.tileSize());
             }
         }
 
@@ -105,8 +119,8 @@ class Board extends JPanel implements MouseListener
     public void mousePressed(MouseEvent e)
     {
         Color c = turnColor();
-        x = e.getX() / (params_.tileSize() + 2);
-        y = e.getY() / (params_.tileSize() + 2);
+        x = e.getX() / (params_.tileSize() + params_.borderSize());
+        y = e.getY() / (params_.tileSize() + params_.borderSize());
         if(matrix_.get(x, y).isEmpty() && matrix_.hasNeighbour(c, x, y))
         {
             matrix_.get(x, y).setColor(c);
