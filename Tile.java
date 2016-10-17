@@ -1,20 +1,36 @@
 import java.awt.Color;
 class Tile
 {
-	private Color color;
+	protected Color color_;
 	public Tile()
 	{
-		color = Color.WHITE;
+		color_ = Color.WHITE;
 	}
 	
 	public Color getColor()
 	{
-		return(color);
+		return(color_);
 	}
 	
 	public void setColor(Color col)
 	{
-		color = col;
+		color_ = col;
+	}
+	
+	public boolean isStarTile()
+	{
+		return (false);
 	}
 }
 
+class StarTile extends Tile
+{
+	public StarTile(Color color)
+	{
+		color_ = color;
+	}	
+	public boolean isStarTile()
+	{
+		return (true);
+	}
+}

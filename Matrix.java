@@ -7,6 +7,7 @@ import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseAdapter;
+import java.util.Random;
 
 class Matrix extends JPanel implements MouseListener
 {
@@ -18,15 +19,29 @@ class Matrix extends JPanel implements MouseListener
 	
 	public Matrix()
 	{
+		int tmp_x;
+		int tmp_y;
 		turn = 0;
 		tab = new Tile[Constante.MATRIX_SIZE + 10][Constante.MATRIX_SIZE + 10];
+		Random rng = new Random();
+		for(int i = 0 ; i < Constante.NB_STAR ; ++i)
+		{
+				while(tab[tmp_x = rng.nextInt(Constante.MATRIX_SIZE)][tmp_y = rng.nextInt(Constante.MATRIX_SIZE)] != null){}
+				tab[tmp_x][tmp_y] = new StarTile(Color.RED);
+		}
+		for(int i = 0 ; i < Constante.NB_STAR ; ++i)
+		{
+				while(tab[tmp_x = rng.nextInt(Constante.MATRIX_SIZE)][tmp_y = rng.nextInt(Constante.MATRIX_SIZE)] != null){}
+				tab[tmp_x][tmp_y] = new StarTile(Color.BLUE);
+		}
 		
 		addMouseListener(this);
 		for(int i = 0 ; i < Constante.MATRIX_SIZE; ++i)
 		{
 			for(int j = 0 ; j < Constante.MATRIX_SIZE; ++j)
 			{
-				tab[i][j] = new Tile();
+				if(tab[i][j] == null)
+					tab[i][j] = new Tile();
 			}
 		}
 	}
@@ -41,20 +56,38 @@ class Matrix extends JPanel implements MouseListener
 		{
 			for(int j = 0 ; j < Constante.MATRIX_SIZE ; ++j)
 			{
-				System.out.println("a");
 				g.setColor(tab[i][j].getColor());
-				if((mousePos != null && mousePos.x / (Constante.TILE_SIZE + 2)== i && mousePos.y / (Constante.TILE_SIZE + 2) == j)) 	
+				if((mousePos != null && mousePos.x / (Constante.TILE_SIZE + 2) == i && mousePos.y / (Constante.TILE_SIZE + 2) == j)) 	
 					g.setColor(turn%2 == 0 ? Color.RED : Color.BLUE);
 				g.fillRect(i*Constante.TILE_SIZE + 2 * i, j*Constante.TILE_SIZE + 2 * j, Constante.TILE_SIZE, Constante.TILE_SIZE);
 			}
 		}
 
 	}
+	
+	public boolean hasNeighbour(Color c, int x, int y)
+	{
+
+		for(int i = (x == 0 ? 0 : x - 1); i <= (x == Constante.MATRIX_SIZE - 1 ? Constante.MATRIX_SIZE - 1 : x + 1) ; ++i)
+			for(int j = (y == 0 ? 0 : y - 1); j <= (y == Constante.MATRIX_SIZE - 1 ? Constante.MATRIX_SIZE - 1 : y + 1) ; ++j)
+			{
+				System.out.println(i + " " + j);
+				if(tab[i][j].getColor() == c)
+					return(true);
+			}
+		return(false);
+	}
 	 
 	public void mousePressed(MouseEvent e)
 	{
-		tab[e.getX() / (Constante.TILE_SIZE + 2)][e.getY() / (Constante.TILE_SIZE + 2)].setColor(turn%2 == 0 ? Color.RED : Color.BLUE);
-		++turn;
+		Color c = (turn%2 == 0 ? Color.RED : Color.BLUE);
+		x = e.getX() / (Constante.TILE_SIZE + 2);
+		y = e.getY() / (Constante.TILE_SIZE + 2);
+		if(tab[x][y].getColor() == Color.WHITE && hasNeighbour(c, x, y))
+		{
+			tab[x][y].setColor(c);
+			++turn;
+		}
 	}         
 	     
     public void mouseReleased(MouseEvent e) {
