@@ -24,7 +24,7 @@ class GameParameters
 
     public GameParameters()
     {
-        this(10, 3, 80);
+        this(10, 3, 50);
     }
 
     public int matrixSize() { return matrix_size_; }
