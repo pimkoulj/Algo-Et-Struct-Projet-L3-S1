@@ -8,13 +8,12 @@ public class Fenetre extends JFrame
     
     public Fenetre()
     {             
-        this.setTitle("StarTile ep.II : the return of the gelShampooing");
+        this.setTitle("StarTile ep.II : the return of gelShampooing");
 
         GameParameters parameters = new GameParameters();
         parameters.setBorderSize(5);
 
         Board gameBoard = new Board(parameters);
-        this.setSize(parameters.matrixSize() * parameters.tileSize() + parameters.borderSize() * parameters.matrixSize(), parameters.matrixSize() * parameters.tileSize() + 5 * parameters.matrixSize());
 
         this.setLocationRelativeTo(null);               
 
@@ -31,6 +30,10 @@ public class Fenetre extends JFrame
         JButton b1 = new JButton("Bonjour");
         menu.add(b1);
         setJMenuBar(menu);
+        
+        this.setSize(parameters.boardSize(), parameters.boardSize() + menu.getHeight() + getInsets().top + getInsets().bottom +25 );//todo: something with prefferedSize
+        System.out.println("height=" + menu.getHeight());
+        
     }       
 
 }

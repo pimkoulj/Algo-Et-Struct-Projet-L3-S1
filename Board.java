@@ -33,6 +33,8 @@ class GameParameters
     public int starCardinal() { return star_cardinal_; }
     public int tileSize() { return tile_size_; }
     public int borderSize() {return border_size_; }
+    public int comprehensiveTileSize() { return border_size_ + tile_size_; }
+    public int boardSize() { return (border_size_ + tile_size_) * matrix_size_;}
 
     public void setMatrixSize(int new_mat_size) { matrix_size_ = new_mat_size; }
     public void setStarCardinal(int new_star_card) { star_cardinal_ = new_star_card; }
