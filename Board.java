@@ -3,6 +3,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.JPanel;
 import java.awt.Color; 
+import java.awt.Font; 
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.event.MouseListener;
@@ -19,7 +20,7 @@ class GameParameters
     public GameParameters(int matsize, int stars, int tsize)
     {
         matrix_size_ = matsize;
-        star_cardinal_ = stars;
+        star_cardinal_ = rectifyStarCardinal(stars);
         tile_size_ = tsize;
         border_size_ = 2;
     }
@@ -28,6 +29,8 @@ class GameParameters
     {
         this(10, 3, 50);
     }
+    
+    private int rectifyStarCardinal(int star_card){return (star_card > tileCardinal()/ 2 ) ? tileCardinal()/2 : star_card;}
 
     public int matrixSize() { return matrix_size_; }
     public int starCardinal() { return star_cardinal_; }
@@ -35,9 +38,10 @@ class GameParameters
     public int borderSize() {return border_size_; }
     public int comprehensiveTileSize() { return border_size_ + tile_size_; }
     public int boardSize() { return (border_size_ + tile_size_) * matrix_size_;}
+    public int tileCardinal() { return matrix_size_ * matrix_size_; }
 
     public void setMatrixSize(int new_mat_size) { matrix_size_ = new_mat_size; }
-    public void setStarCardinal(int new_star_card) { star_cardinal_ = new_star_card; }
+    public void setStarCardinal(int new_star_card) { star_cardinal_ = rectifyStarCardinal(new_star_card);}
     public void setTileSize(int new_tile_size) { tile_size_ = new_tile_size;}
     public void setBorderSize(int new_border_size) { border_size_ = new_border_size; }
 
@@ -104,6 +108,8 @@ class Board extends JPanel implements MouseListener
         g.setColor(Color.BLACK);
         g.fillRect(0,0, 10000, 10000);
         final Point mousePos = this.getMousePosition();
+        Font font = new Font("Serif", Font.BOLD, params_.tileSize());
+        g.setFont(font);
 		
         for(int i = 0 ; i < matrix_.size() ; ++i)
         {
@@ -113,6 +119,11 @@ class Board extends JPanel implements MouseListener
                 if((mousePos != null && mousePos.x / (params_.tileSize() + params_.borderSize()) == i && mousePos.y / (params_.tileSize() + params_.borderSize()) == j)) 	
                     g.setColor(turn%2 == 0 ? Color.RED : Color.BLUE);
                 g.fillRect(i*params_.tileSize() + params_.borderSize() * i, j*params_.tileSize() + params_.borderSize() * j, params_.tileSize(), params_.tileSize());
+                if(matrix_.get(i,j).isStarTile())
+                {
+					g.setColor(Color.BLACK);
+					g.drawString("*",i * params_.comprehensiveTileSize() + params_.tileSize() / 3, j*params_.comprehensiveTileSize() + params_.tileSize() / 1);
+				}
             }
         }
 

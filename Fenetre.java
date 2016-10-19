@@ -12,6 +12,8 @@ public class Fenetre extends JFrame
 
         GameParameters parameters = new GameParameters();
         parameters.setBorderSize(5);
+        parameters.setStarCardinal(51);
+        parameters.setTileSize(10);
 
         Board gameBoard = new Board(parameters);
 
@@ -24,15 +26,15 @@ public class Fenetre extends JFrame
         this.setContentPane(gameBoard);  
             
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setVisible(true);
-    
+        
         menu = new JMenuBar();
         JButton b1 = new JButton("Bonjour");
         menu.add(b1);
         setJMenuBar(menu);
-        
         this.setSize(parameters.boardSize(), parameters.boardSize() + menu.getHeight() + getInsets().top + getInsets().bottom +25 );//todo: something with prefferedSize
         System.out.println("height=" + menu.getHeight());
+        
+        this.setVisible(true);
         
     }       
 

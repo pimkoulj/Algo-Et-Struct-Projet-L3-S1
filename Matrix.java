@@ -37,11 +37,8 @@ class Matrix implements IMatrix
 
         for(int i = (x == 0 ? 0 : x - 1); i <= (x == size() - 1 ? size() - 1 : x + 1) ; ++i)
             for(int j = (y == 0 ? 0 : y - 1); j <= (y == size() - 1 ? size() - 1 : y + 1) ; ++j)
-            {
-                //System.out.println(i + " " + j);
                 if(tab_[i][j].getColor() == c)
                     return(true);
-            }
         return(false);
     }
 }

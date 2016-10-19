@@ -2,6 +2,7 @@ import java.awt.Color;
 class Tile
 {
     protected Color color_;
+    protected Tile pere;
     public Tile()
     {
         color_ = Color.WHITE;
