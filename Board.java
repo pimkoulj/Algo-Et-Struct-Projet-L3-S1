@@ -8,6 +8,7 @@ import java.awt.Point;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseAdapter;
 import java.util.Random;
+import java.awt.Dimension;
 
 class GameParameters
 {
@@ -68,6 +69,8 @@ class Board extends JPanel implements MouseListener
         addMouseListener(this);
 
         initialiseEmptyTiles();
+
+        super.setPreferredSize(new Dimension(params_.comprehensiveTileSize() * params_.matrixSize(), params_.comprehensiveTileSize() * params_.matrixSize()));
     }
 
     private void initialiseStarTiles()

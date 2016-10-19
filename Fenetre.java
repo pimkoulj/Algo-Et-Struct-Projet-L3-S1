@@ -31,9 +31,8 @@ public class Fenetre extends JFrame
         menu.add(b1);
         setJMenuBar(menu);
         
-        this.setSize(parameters.boardSize(), parameters.boardSize() + menu.getHeight() + getInsets().top + getInsets().bottom +25 );//todo: something with prefferedSize
-        System.out.println("height=" + menu.getHeight());
-        
+        //this.setSize(parameters.boardSize(), parameters.boardSize() + menu.getHeight() + getInsets().top + getInsets().bottom +25 );//todo: something with prefferedSize
+        pack();
     }       
 
 }
