@@ -16,6 +16,11 @@ class Matrix implements IMatrix
     {
         tab_ = new Tile[size][size];
     }
+    
+    public boolean valid_coordinates(int x, int y)
+    {
+        return(x >= 0 && y >= 0 && x < size() && y < size());
+    }
        
     public Tile get(int x, int y)
     {

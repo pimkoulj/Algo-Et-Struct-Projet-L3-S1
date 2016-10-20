@@ -1,6 +1,5 @@
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import javax.swing.JPanel;
 import java.awt.Color; 
 import java.awt.Font; 
@@ -79,8 +78,8 @@ class Board extends JPanel implements MouseListener
         addMouseListener(this);
 
         initialiseEmptyTiles();
-
-        super.setPreferredSize(new Dimension(params_.comprehensiveTileSize() * params_.matrixSize(), params_.comprehensiveTileSize() * params_.matrixSize()));
+		int comprehensive_size = params_.comprehensiveTileSize() * params_.matrixSize() - params_.borderSize();
+        super.setPreferredSize(new Dimension(comprehensive_size ,comprehensive_size ));
         
     }
 	
@@ -168,8 +167,14 @@ class Board extends JPanel implements MouseListener
             for(int j = 0 ; j < matrix_.size() ; ++j)
             {
                 g.setColor(matrix_.get(i, j).getColor());
-                if((mousePos != null && (x = mousePos.x / (params_.tileSize() + params_.borderSize())) == i && (y = mousePos.y / (params_.tileSize() + params_.borderSize())) == j) && matrix_.hasNeighbour(c,x,y) && matrix_.get(x,y).getColor() == Color.WHITE) 	
+                if(mousePos != null 
+				&& ((x = mousePos.x / params_.comprehensiveTileSize()) == i)
+				&& ((y = mousePos.y / params_.comprehensiveTileSize()) == j) 
+				& matrix_.hasNeighbour(c,x,y) 
+				&& matrix_.get(x,y).getColor() == Color.WHITE) 	
+				{
                     g.setColor(turn%2 == 0 ? Color.RED : Color.BLUE);
+				}
                 g.fillRect(i*params_.tileSize() + params_.borderSize() * i, j*params_.tileSize() + params_.borderSize() * j, params_.tileSize(), params_.tileSize());
                 if(matrix_.get(i,j).isStarTile())
                 {
@@ -187,7 +192,7 @@ class Board extends JPanel implements MouseListener
         x = e.getX() / (params_.tileSize() + params_.borderSize());
         y = e.getY() / (params_.tileSize() + params_.borderSize());
         
-        if(matrix_.get(x, y).isEmpty() && matrix_.hasNeighbour(c, x, y))
+        if(matrix_.valid_coordinates(x,y) && matrix_.get(x, y).isEmpty() && matrix_.hasNeighbour(c, x, y))
         {
             matrix_.get(x, y).setColor(c);
             matrix_.joinNeighbours(x,y);
