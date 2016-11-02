@@ -24,7 +24,6 @@ class GameParameters
         matrix_size_ = matsize;
         star_cardinal_ = rectifyStarCardinal(stars);
         tile_size_ = tsize;
-        border_size_ = 2;
     }
 
     public GameParameters()
@@ -59,6 +58,7 @@ class Board extends JPanel implements MouseListener
     private GameParameters params_;
     private ArrayList<int[]> red_star_tiles;
     private ArrayList<int[]> blue_star_tiles;
+    private State state_;
    
     
     public Board()
@@ -80,7 +80,7 @@ class Board extends JPanel implements MouseListener
         initialiseEmptyTiles();
 		int comprehensive_size = params_.comprehensiveTileSize() * params_.matrixSize() - params_.borderSize();
         super.setPreferredSize(new Dimension(comprehensive_size ,comprehensive_size ));
-        
+        state_ = new ColorerCase(this);
     }
 	
 	public void	addRedStarTile(int x, int y)
@@ -89,6 +89,42 @@ class Board extends JPanel implements MouseListener
 		red_star_tiles.add(new int[]{x,y});
 		matrix_.joinNeighbours(x,y);
     }
+	
+	public void set_etat_courant(State state)
+	{
+		state_ = state;
+	}
+	
+	public void set_tile_color(int x, int y, Color color)
+	{
+		matrix_.get(x,y).setColor(color);
+		matrix_.joinNeighbours(x,y);
+	}
+	
+	public boolean hasNeighbour(Color c, int x, int y)  //une fonction qui du coup n'est plus forcément utile vu qu'on peut colorer une case n'importe ou
+	{
+		return(matrix_.hasNeighbour(c,x,y));
+	}
+	
+	public void fillRect(int x, int y , int width, int height, Graphics g)
+	{
+		g.fillRect(x,y,width, height);
+	}
+	 
+	public Tile get_tile(int x, int y)
+	{
+		return(matrix_.get(x,y));
+	}
+	
+	public void next_turn()
+	{
+		++turn;
+	}
+	
+	public boolean valid_coordinates(int x, int y)
+	{
+		return(x >= 0 && y >= 0 && x < params_.boardSize() && y <  params_.boardSize());
+	}
 	
 	public void	addBlueStarTile(int x, int y)
     {
@@ -153,59 +189,62 @@ class Board extends JPanel implements MouseListener
 	
     public void paintComponent(Graphics g)
     {
-		Color c = turnColor();
-        g.setColor(Color.BLACK);
-        g.fillRect(0,0, 10000, 10000);
-        int x;
-        int y;
-        final Point mousePos = this.getMousePosition();
-        Font font = new Font("Serif", Font.BOLD, params_.tileSize() );
-        g.setFont(font);
+		state_.paintComponent(g);
+		//~ Color c = turnColor();
+        //~ g.setColor(Color.WHITE);
+      
+        //~ g.fillRect(0,0, 10000, 10000);
+        //~ int x;
+        //~ int y;
+        //~ final Point mousePos = this.getMousePosition();
+        //~ Font font = new Font("Serif", Font.BOLD, params_.tileSize() );
+        //~ g.setFont(font);
 		
-        for(int i = 0 ; i < matrix_.size() ; ++i)
-        {
-            for(int j = 0 ; j < matrix_.size() ; ++j)
-            {
-                g.setColor(matrix_.get(i, j).getColor());
-                if(mousePos != null 
-				&& ((x = mousePos.x / params_.comprehensiveTileSize()) == i)
-				&& ((y = mousePos.y / params_.comprehensiveTileSize()) == j) 
-				& matrix_.hasNeighbour(c,x,y) 
-				&& matrix_.get(x,y).getColor() == Color.WHITE) 	
-				{
-                    g.setColor(turn%2 == 0 ? Color.RED : Color.BLUE);
-				}
-                g.fillRect(i*params_.tileSize() + params_.borderSize() * i, j*params_.tileSize() + params_.borderSize() * j, params_.tileSize(), params_.tileSize());
-                if(matrix_.get(i,j).isStarTile())
-                {
-					g.setColor(Color.BLACK);
-					g.drawString("*",i * params_.comprehensiveTileSize() + params_.tileSize() / 3, j*params_.comprehensiveTileSize() + params_.tileSize() / 1);
-				}
-            }
-        }
+        //~ for(int i = 0 ; i < matrix_.size() ; ++i)
+        //~ {
+            //~ for(int j = 0 ; j < matrix_.size() ; ++j)
+            //~ {
+                //~ g.setColor(matrix_.get(i, j).getColor());
+                //~ if(mousePos != null 
+				//~ && ((x = mousePos.x / params_.comprehensiveTileSize()) == i)
+				//~ && ((y = mousePos.y / params_.comprehensiveTileSize()) == j) 
+				//~ & matrix_.hasNeighbour(c,x,y) 
+				//~ && matrix_.get(x,y).getColor() == Color.WHITE) 	
+				//~ {
+                    //~ g.setColor(turn%2 == 0 ? Color.RED : Color.BLUE);
+				//~ }
+                //~ g.fillRect(i*params_.tileSize() + params_.borderSize() * i, j*params_.tileSize() + params_.borderSize() * j, params_.tileSize(), params_.tileSize());
+                //~ if(matrix_.get(i,j).isStarTile())
+                //~ {
+					//~ g.setColor(Color.BLACK);
+					//~ g.drawString("*",i * params_.comprehensiveTileSize() + params_.tileSize() / 3, j*params_.comprehensiveTileSize() + params_.tileSize() / 1);
+				//~ }
+            //~ }
+        //~ }
 
     }
 	 
     public void mousePressed(MouseEvent e)
     {
-        Color c = turnColor();
-        x = e.getX() / (params_.tileSize() + params_.borderSize());
-        y = e.getY() / (params_.tileSize() + params_.borderSize());
+        //~ Color c = turnColor();
+        //~ x = e.getX() / (params_.tileSize() + params_.borderSize());
+        //~ y = e.getY() / (params_.tileSize() + params_.borderSize());
         
-        if(matrix_.valid_coordinates(x,y) && matrix_.get(x, y).isEmpty() && matrix_.hasNeighbour(c, x, y))
-        {
-            matrix_.get(x, y).setColor(c);
-            matrix_.joinNeighbours(x,y);
+        //~ if(matrix_.valid_coordinates(x,y) && matrix_.get(x, y).isEmpty() && matrix_.hasNeighbour(c, x, y))
+        //~ {
+            //~ matrix_.get(x, y).setColor(c);
+            //~ matrix_.joinNeighbours(x,y);
             
-            if(nbEtoiles(x,y) == params_.starCardinal())
-            {
-				JOptionPane.showMessageDialog(this, 
-											 (matrix_.get(x,y).getColor() == Color.RED ? "Rouge a gagné !" : "Bleu a gagné !"),
-											 " Fin du game",
-											 JOptionPane.INFORMATION_MESSAGE);
-			}
-            ++turn;
-        }
+            //~ if(nbEtoiles(x,y) == params_.starCardinal())
+            //~ {
+				//~ JOptionPane.showMessageDialog(this, 
+											 //~ (matrix_.get(x,y).getColor() == Color.RED ? "Rouge a gagné !" : "Bleu a gagné !"),
+											 //~ " Fin du game",
+											 //~ JOptionPane.INFORMATION_MESSAGE);
+			//~ }
+            //~ ++turn;
+        //~ }
+        state_.mousePressed(e);
     }
 
     public Color turnColor()

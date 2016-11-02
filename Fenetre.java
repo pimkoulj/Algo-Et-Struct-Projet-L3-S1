@@ -25,21 +25,15 @@ public class Fenetre extends JFrame
         this.getContentPane().setBackground(Color.black); 
             
 
-        //Instanciation d'un objet JPanel;
-	
-        //On prévient notre JFrame que notre JPanel sera son content pane
-        //~ this.setContentPane(background); 
-          
-        //~ this.setContentPane(gameBoard);  
 		Container pane = this;
             
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         menu = new JMenuBar();
         Dimension button_size = new Dimension(200,70);
-        JButton b1 = new JButton("ColorerCase");
+        StateSwitchingButton b1 = new StateSwitchingButton("ColorerCase", new ColorerCase(gameBoard));
         b1.setPreferredSize(button_size);
-        JButton b2 = new JButton("afficheComposante");
+        JButton b2 = new StateSwitchingButton("AfficheComposante", new AfficheComposante(gameBoard));
         b2.setPreferredSize(button_size);
         JButton b3 = new JButton("existeCheminCases");
         b3.setPreferredSize(button_size);
@@ -51,7 +45,7 @@ public class Fenetre extends JFrame
         b6.setPreferredSize(button_size);
         JButton b7 = new JButton("relierComposantes");
         b7.setPreferredSize(button_size);
-        JButton b8 = new JButton("joueDeuxHumains");
+         StateSwitchingButton b8 = new  StateSwitchingButton("joueDeuxHumains", new JoueDeuxHumains(gameBoard));
         b8.setPreferredSize(button_size);
         //~ setJMenuBar(menu);
         
@@ -92,30 +86,7 @@ public class Fenetre extends JFrame
 		
 		c.gridy = 7;
 		pane.add(b8, c);
-        //~ layout.setAutoCreateGaps(true);
-        //~ layout.setAutoCreateContainerGaps(true);
-        /*GroupLayout layout = new GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setAutoCreateGaps(true);
-        layout.setAutoCreateContainerGaps(true);
-        
-        layout.setHorizontalGroup(layout.createSequentialGroup()
-			.addComponent(gameBoard)
-			.addGroup(layout.createParallelGroup(LEADING)
-				.addComponent(b1)
-				.addComponent(b2)
-				.addComponent(b3)));
-			
-			  
-        layout.setVerticalGroup(layout.createSequentialGroup()
-			.addGroup(layout.createParallelGroup(LEADING)
-				.addComponent(gameBoard)
-				.addGroup(layout.createSequentialGroup()
-					.addComponent(b1)
-					.addComponent(b2)
-					.addComponent(b3))));
-        */
-        //this.setSize(parameters.boardSize(), parameters.boardSize() + menu.getHeight() + getInsets().top + getInsets().bottom +25 );//todo: something with prefferedSize
+
         pack();
         this.setVisible(true);
     }       

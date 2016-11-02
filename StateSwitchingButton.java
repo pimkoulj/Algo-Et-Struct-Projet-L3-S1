@@ -1,11 +1,11 @@
 import java.awt.Color;
 import javax.swing.JFrame;
 import javax.swing.*;
-import java.awt.event.MouseListener;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.ActionEvent;
 
-class StateSwitchingButton extends JButton implements MouseListener
+class StateSwitchingButton extends JButton
 {
 	private State state_;
 	private String title_;
@@ -14,26 +14,20 @@ class StateSwitchingButton extends JButton implements MouseListener
 	{
 		super(title);
 		state_ = state;
+		addActionListener(new ActionListener()
+		{		
+			public void actionPerformed(ActionEvent e)
+			{
+				state_.switch_to_state();
+			}
+		});
 	}
 	
-	public void mousePressed(MouseEvent e)
-    {
-		//~ state_.switch_matrix_state();
-    }
+	//~ public void actionPerformed(ActionEvent e)
+    //~ {
+		//~ state_.switch_to_state();
+		//~ 
+    //~ }
  
-    public void mouseReleased(MouseEvent e) {
- 
-    }
-     
-    public void mouseEntered(MouseEvent e) {
 
-    }
-     
-    public void mouseExited(MouseEvent e) {
-
-    }
-     
-    public void mouseClicked(MouseEvent e) {
-
-    }
 }
