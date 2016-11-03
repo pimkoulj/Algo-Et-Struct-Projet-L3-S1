@@ -66,8 +66,6 @@ class JoueDeuxHumains extends State
         int x = 0;
         int y = 0;
         final Point mousePos = target_.getMousePosition();
-        Font font = new Font("Serif", Font.BOLD, params_.tileSize() );
-        g.setFont(font);
 		
         for(int i = 0 ; i < params_.matrixSize() ; ++i)
         {

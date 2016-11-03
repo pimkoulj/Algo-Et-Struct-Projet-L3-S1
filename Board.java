@@ -173,6 +173,7 @@ class Board extends JPanel implements MouseListener
 	
     public void paintComponent(Graphics g)
     {
+        g.setFont(params_.star_font());
         state_.paintComponent(g);
         //~ Color c = turnColor();
         //~ g.setColor(Color.WHITE);
