@@ -32,6 +32,12 @@ abstract class State
     public abstract void process_event(MouseEvent e);
     public void reset(){}
     public abstract void paintComponent(Graphics g);
+
+    protected void draw_background(Graphics g)
+    {
+        g.setColor(Color.BLACK);
+        g.fillRect(0,0, 10000, 10000);
+    }
 }
 
 abstract class MouseOverState extends State
@@ -44,8 +50,7 @@ abstract class MouseOverState extends State
     
     public void paintComponent(Graphics g)
     {
-        g.setColor(Color.BLACK);
-        g.fillRect(0,0, 10000, 10000);
+        draw_background(g);
         
         Coordinate mouse_coord = target_.locate_mouse();
         boolean mouseover_valid = target_.coordinates_are_valid(mouse_coord);
@@ -170,9 +175,8 @@ class AfficheComposante extends State
     }
     public void paintComponent(Graphics g)
     {
-        g.setColor(Color.BLACK);
+        draw_background(g);
         Color greyed = new Color(0,0,0,180);
-        g.fillRect(0,0, 10000, 10000);
         final Point mousePos = target_.getMousePosition();
         Font font = new Font("Serif", Font.BOLD, params_.tileSize() );
         g.setFont(font);
@@ -250,9 +254,9 @@ class RelierCasesMin extends State
     
     public void paintComponent(Graphics g)
     {
-        g.setColor(Color.BLACK);
+        draw_background(g);
+        
         Color greyed = new Color(0,0,0,180);
-        g.fillRect(0,0, 10000, 10000);
         final Point mousePos = target_.getMousePosition();
         Font font = new Font("Serif", Font.BOLD, params_.tileSize() );
         g.setFont(font);
