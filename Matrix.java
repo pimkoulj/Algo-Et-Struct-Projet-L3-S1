@@ -47,26 +47,26 @@ class Matrix implements IMatrix
         return(false);
     }
     
-	public void joinNeighbours(int x, int y)
+    public void joinNeighbours(int x, int y)
     {
-		Color c = tab_[x][y].getColor();
+        Color c = tab_[x][y].getColor();
         for(int i = (x == 0 ? 0 : x - 1); i <= (x == size() - 1 ? size() - 1 : x + 1) ; ++i)
             for(int j = (y == 0 ? 0 : y - 1); j <= (y == size() - 1 ? size() - 1 : y + 1) ; ++j)
                 if(tab_[i][j] != null && tab_[i][j].getColor() == c)
                 {
                     tab_[x][y].union(tab_[i][j]);
-				}
+                }
     }
     
     public void afficher()
     {
-		  for(int i = 0 ; i < tab_.length ; ++i)
+        for(int i = 0 ; i < tab_.length ; ++i)
         {
             for(int j = 0 ; j < tab_.length ; ++j)
             {
-				System.out.print((tab_[j][i].nbFils()) + " ");
-			}
-			System.out.println("");
-		}
-	}
+                System.out.print((tab_[j][i].nbFils()) + " ");
+            }
+            System.out.println("");
+        }
+    }
 }

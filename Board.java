@@ -90,6 +90,12 @@ class Board extends JPanel implements MouseListener
         matrix_.joinNeighbours(x,y);
     }
 
+    public void colorise_tile(Coordinate coord, Color color)
+    {
+        set_tile_color(coord.x(), coord.y(), color);
+    }
+        
+
     
     //#####################################################
     //####################### tests #######################

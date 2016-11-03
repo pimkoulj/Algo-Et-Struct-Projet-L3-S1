@@ -46,7 +46,7 @@ class JoueDeuxHumains extends State
         
         if(target_.coordinates_are_valid(click_pos) && target_.tile(click_pos).isEmpty())
         {
-            target_.tile(click_pos).setColor(target_.turn_color());
+            target_.colorise_tile(click_pos, target_.turn_color());
             if(target_.nb_etoiles(click_pos) == params_.starCardinal())
             {
                 JOptionPane.showMessageDialog(
@@ -105,7 +105,7 @@ class ColorerCase extends State
             null,
             options,
             options[0]);
-        Color c = n == 0 ? Color.RED : Color.BLUE; /////*******
+        Color c = (n == 0) ? Color.RED : Color.BLUE; /////*******
         int x = e.getX() / (params_.tileSize() + params_.borderSize());
         int y = e.getY() / (params_.tileSize() + params_.borderSize());
         

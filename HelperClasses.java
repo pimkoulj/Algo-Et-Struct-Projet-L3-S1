@@ -41,7 +41,7 @@ class GameParameters
     public void setBorderSize(int new_border_size) { border_size_ = new_border_size; }
 }
 
-class Coordinate
+class Coordinate//todo: remplacer par Point ? (j'avais pas tilté que ça existait)
 {
     private int x_;
     private int y_;
