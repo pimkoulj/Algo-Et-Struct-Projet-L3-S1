@@ -224,7 +224,7 @@ class Board extends JPanel implements MouseListener
         {
             while(matrix_.get(tmp_x = rng.nextInt(matrix_.size()), tmp_y = rng.nextInt(matrix_.size())) != null){}
 			
-            add_blue_star_tile(tmp_x, tmp_y);
+            addBlueStarTile(tmp_x, tmp_y);
         }
     }
 
@@ -247,7 +247,7 @@ class Board extends JPanel implements MouseListener
         matrix_.joinNeighbours(x,y);
     }
 	
-    private void add_blue_star_tile(int x, int y)
+    private void addBlueStarTile(int x, int y)
     {
         matrix_.set(x, y, new StarTile(Color.BLUE));
         blue_star_tiles.add(new int[]{x,y});
