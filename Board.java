@@ -49,10 +49,23 @@ class GameParameters
 
 }
 
+class Coordonnee
+{
+	private int x_;
+	private int y_;
+	
+	public Coordonnee(int x, int y)
+	{
+		x_ = x;
+		y_ = y;
+	}
+	
+	public int x() { return x_; }
+	public int y() { return y_; }
+}
+
 class Board extends JPanel implements MouseListener
 {
-    private int x;
-    private int y;
     private int turn;
     private Matrix matrix_;
     private GameParameters params_;
@@ -95,6 +108,12 @@ class Board extends JPanel implements MouseListener
 		state_ = state;
 	}
 	
+	public Coordonnee getCoord(MouseEvent e)
+	{
+		return new Coordonnee(e.getX() / (params_.tileSize() + params_.borderSize()),
+			e.getY() / (params_.tileSize() + params_.borderSize()));
+	}
+	
 	public void set_tile_color(int x, int y, Color color)
 	{
 		matrix_.get(x,y).setColor(color);
@@ -114,6 +133,11 @@ class Board extends JPanel implements MouseListener
 	public Tile get_tile(int x, int y)
 	{
 		return(matrix_.get(x,y));
+	}
+	
+	public Tile get_tile(Coordonnee c)
+	{
+		return get_tile(c.x(), c.y());
 	}
 	
 	public void next_turn()
