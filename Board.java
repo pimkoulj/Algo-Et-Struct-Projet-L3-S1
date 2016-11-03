@@ -43,40 +43,16 @@ class Board extends JPanel implements MouseListener
         super.setPreferredSize(new Dimension(comprehensive_size ,comprehensive_size ));
         state_ = new ColorerCase(this);
     }
+
+    //#########################################################
+    //################### pseudo getters ######################
+    //###                                                   ###
 	
-    public void	addRedStarTile(int x, int y)
-    {
-        matrix_.set(x, y, new StarTile(Color.RED));
-        red_star_tiles.add(new int[]{x,y});
-        matrix_.joinNeighbours(x,y);
-    }
-	
-    public void set_etat_courant(State state)
-    {
-        state_ = state;
-    }
-	
-    public Coordinate getCoordinate(MouseEvent e)
+    public Coordinate locate(MouseEvent e)
     {
         return new Coordinate(
             e.getX() / params_.comprehensiveTileSize(),
             e.getY() / params_.comprehensiveTileSize());
-    }
-	
-    public void set_tile_color(int x, int y, Color color)
-    {
-        matrix_.get(x,y).setColor(color);
-        matrix_.joinNeighbours(x,y);
-    }
-	
-    public boolean hasNeighbour(Color c, int x, int y)  //une fonction qui du coup n'est plus forcément utile vu qu'on peut colorer une case n'importe ou
-    {
-        return(matrix_.hasNeighbour(c,x,y));
-    }
-	
-    public void fillRect(int x, int y , int width, int height, Graphics g)
-    {
-        g.fillRect(x,y,width, height);
     }
 	 
     public Tile get_tile(int x, int y)
@@ -88,10 +64,40 @@ class Board extends JPanel implements MouseListener
     {
         return matrix_.get(c.x(), c.y());
     }
-	
-    public void next_turn()
+
+    public Color turnColor()
     {
-        ++turn;
+        return (turn %2 == 0) ? Color.RED : Color.BLUE;
+    }
+
+    public GameParameters params()
+    {
+        return params_;
+    }
+
+    //#################################################
+    //##################### setters ###################
+    //###                                           ###
+	
+    public void set_etat_courant(State state)
+    {
+        state_ = state;
+    }
+	
+    public void set_tile_color(int x, int y, Color color)
+    {
+        matrix_.get(x,y).setColor(color);
+        matrix_.joinNeighbours(x,y);
+    }
+
+    
+    //#####################################################
+    //####################### tests #######################
+    //###                                               ###
+
+    public boolean hasNeighbour(Color c, int x, int y)  //une fonction qui du coup n'est plus forcément utile vu qu'on peut colorer une case n'importe ou
+    {
+        return(matrix_.hasNeighbour(c,x,y));
     }
 	
     public boolean coordinates_are_valid(int x, int y)
@@ -104,44 +110,20 @@ class Board extends JPanel implements MouseListener
         return coord.x() >= 0 && coord.x() < params_.boardSize()
             && coord.y() >= 0 && coord.y() < params_.boardSize();
     }
-	
-    public void	addBlueStarTile(int x, int y)
-    {
-        matrix_.set(x, y, new StarTile(Color.BLUE));
-        blue_star_tiles.add(new int[]{x,y});
-        matrix_.joinNeighbours(x,y);
-    }
- 
- 
-    private void initialiseStarTiles()
-    {
-        int tmp_x;
-        int tmp_y;
-        Random rng = new Random();
-        for(int i = 0 ; i < params_.starCardinal() ; ++i)
-        {
-            while(matrix_.get(tmp_x = rng.nextInt(matrix_.size()), tmp_y = rng.nextInt(matrix_.size())) != null){}
-			
-            addRedStarTile(tmp_x, tmp_y);
-        }
-        for(int i = 0 ; i < params_.starCardinal() ; ++i)
-        {
-            while(matrix_.get(tmp_x = rng.nextInt(matrix_.size()), tmp_y = rng.nextInt(matrix_.size())) != null){}
-			
-            addBlueStarTile(tmp_x, tmp_y);
-        }
-    }
 
-    private void initialiseEmptyTiles()
+
+    //#####################################################
+    //##################### other stuff ###################
+    //###                                               ###
+    
+    public void fillRect(int x, int y , int width, int height, Graphics g)
     {
-        for(int i = 0 ; i < matrix_.size(); ++i)
-        {
-            for(int j = 0 ; j < matrix_.size(); ++j)
-            {
-                if(matrix_.get(i, j) == null)
-                    matrix_.set(i, j, new Tile());
-            }
-        }
+        g.fillRect(x,y,width, height);
+    }
+	
+    public void next_turn()
+    {
+        ++turn;
     }
 	
     public int nbEtoiles(int x, int y)
@@ -198,35 +180,15 @@ class Board extends JPanel implements MouseListener
                 yval * params_.comprehensiveTileSize() + params_.tileSize());
         }
     }
+
+    //############################################################
+    //############### MouseListener implementation ###############
+    //###                                                      ###
 	 
     public void mousePressed(MouseEvent e)
     {
-        //~ Color c = turnColor();
-        //~ x = e.getX() / (params_.tileSize() + params_.borderSize());
-        //~ y = e.getY() / (params_.tileSize() + params_.borderSize());
-        
-        //~ if(matrix_.coordinates_are_valid(x,y) && matrix_.get(x, y).isEmpty() && matrix_.hasNeighbour(c, x, y))
-        //~ {
-        //~ matrix_.get(x, y).setColor(c);
-        //~ matrix_.joinNeighbours(x,y);
-            
-        //~ if(nbEtoiles(x,y) == params_.starCardinal())
-        //~ {
-        //~ JOptionPane.showMessageDialog(this, 
-        //~ (matrix_.get(x,y).getColor() == Color.RED ? "Rouge a gagné !" : "Bleu a gagné !"),
-        //~ " Fin du game",
-        //~ JOptionPane.INFORMATION_MESSAGE);
-        //~ }
-        //~ ++turn;
-        //~ }
         state_.process_event(e);
     }
-
-    public Color turnColor()
-    {
-        return (turn %2 == 0) ? Color.RED : Color.BLUE;
-    }
-	     
     public void mouseReleased(MouseEvent e) {
  
     }
@@ -243,8 +205,52 @@ class Board extends JPanel implements MouseListener
 
     }
 
-    public GameParameters params()
+    //######################################################
+    //########### private initialisation methods ###########
+    //###                                                ###
+ 
+    private void initialiseStarTiles()
     {
-        return params_;
+        int tmp_x;
+        int tmp_y;
+        Random rng = new Random();
+        for(int i = 0 ; i < params_.starCardinal() ; ++i)
+        {
+            while(matrix_.get(tmp_x = rng.nextInt(matrix_.size()), tmp_y = rng.nextInt(matrix_.size())) != null){}
+			
+            addRedStarTile(tmp_x, tmp_y);
+        }
+        for(int i = 0 ; i < params_.starCardinal() ; ++i)
+        {
+            while(matrix_.get(tmp_x = rng.nextInt(matrix_.size()), tmp_y = rng.nextInt(matrix_.size())) != null){}
+			
+            addBlueStarTile(tmp_x, tmp_y);
+        }
     }
+
+    private void initialiseEmptyTiles()
+    {
+        for(int i = 0 ; i < matrix_.size(); ++i)
+        {
+            for(int j = 0 ; j < matrix_.size(); ++j)
+            {
+                if(matrix_.get(i, j) == null)
+                    matrix_.set(i, j, new Tile());
+            }
+        }
+    }
+
+    private void addRedStarTile(int x, int y)
+    {
+        matrix_.set(x, y, new StarTile(Color.RED));
+        red_star_tiles.add(new int[]{x,y});
+        matrix_.joinNeighbours(x,y);
+    }
+	
+    private void addBlueStarTile(int x, int y)
+    {
+        matrix_.set(x, y, new StarTile(Color.BLUE));
+        blue_star_tiles.add(new int[]{x,y});
+        matrix_.joinNeighbours(x,y);
+    }//todo: generalise that. maybe.
 }

@@ -42,7 +42,7 @@ class JoueDeuxHumains extends State
     }
     public void process_event(MouseEvent e)
     {
-        Coordinate click_pos = target_.getCoordinate(e);
+        Coordinate click_pos = target_.locate(e);
         
         if(target_.coordinates_are_valid(click_pos) && target_.tile(click_pos).isEmpty())
         {
@@ -228,13 +228,13 @@ class RelierCasesMin extends State
     {
         if(clicked_ == 0)
         {
-            origine_ = target_.getCoordinate(e);
+            origine_ = target_.locate(e);
             if(!target_.tile(origine_).isEmpty())
                 ++clicked_;
         }
         else if(clicked_ == 1)
         {
-            destination_ = target_.getCoordinate(e);
+            destination_ = target_.locate(e);
             if(target_.tile(origine_).getColor() == target_.tile(destination_).getColor())
             {
                 find_path();
