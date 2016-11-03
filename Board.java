@@ -54,6 +54,20 @@ class Board extends JPanel implements MouseListener
             e.getX() / params_.comprehensiveTileSize(),
             e.getY() / params_.comprehensiveTileSize());
     }
+
+    public Coordinate locate(Point pos)
+    {
+        if(pos == null)//nécessaire ?
+            return new Coordinate(-1, -1);
+        return new Coordinate(
+            pos.x / params_.comprehensiveTileSize(),
+            pos.y / params_.comprehensiveTileSize() );
+    }
+
+    public Coordinate locate_mouse()
+    {
+        return locate(getMousePosition());
+    }
 	 
     public Tile get_tile(int x, int y)
     {

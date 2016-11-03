@@ -34,12 +34,44 @@ abstract class State
     public abstract void paintComponent(Graphics g);
 }
 
-class JoueDeuxHumains extends State
+abstract class MouseOverState extends State
+{
+
+    public MouseOverState(Board target)
+    {
+        super(target);
+    }
+    
+    public void paintComponent(Graphics g)
+    {
+        g.setColor(Color.BLACK);
+        g.fillRect(0,0, 10000, 10000);
+        
+        Coordinate mouse_coord = target_.locate_mouse();
+        boolean mouseover_valid = target_.coordinates_are_valid(mouse_coord);
+		
+        for(int i = 0 ; i < params_.matrixSize() ; ++i)
+            for(int j = 0 ; j < params_.matrixSize() ; ++j)
+            {
+                g.setColor(target_.get_tile(i, j).getColor());
+                if( mouseover_valid
+                    && mouse_coord.equals(i, j)
+                    && target_.tile(mouse_coord).isEmpty() )
+                { g.setColor(mouseover_color()); }
+                
+                target_.draw_tile(g, i, j);
+            }
+    }
+    protected abstract Color mouseover_color();
+}
+
+class JoueDeuxHumains extends MouseOverState
 {
     public JoueDeuxHumains(Board target)
     {
         super(target);
     }
+    
     public void process_event(MouseEvent e)
     {
         Coordinate click_pos = target_.locate(e);
@@ -58,41 +90,26 @@ class JoueDeuxHumains extends State
             target_.next_turn();
         }
     }
-    
-    public void paintComponent(Graphics g)
+
+    protected Color mouseover_color()
     {
-        g.setColor(Color.BLACK);
-        g.fillRect(0,0, 10000, 10000);
-        int x = 0;
-        int y = 0;
-        final Point mousePos = target_.getMousePosition();
-		
-        for(int i = 0 ; i < params_.matrixSize() ; ++i)
-            for(int j = 0 ; j < params_.matrixSize() ; ++j)
-            {
-                g.setColor(target_.get_tile(i, j).getColor());
-                if(mousePos != null
-                   && ((x = mousePos.x / params_.comprehensiveTileSize()) == i)
-                   && ((y = mousePos.y / params_.comprehensiveTileSize()) == j)
-                   && target_.coordinates_are_valid(x,y)
-                   && target_.get_tile(x, y).isEmpty())
-                {
-                    Color c = target_.turn_color();
-                    g.setColor(new Color(Math.min(c.getRed() + 100, 255) ,Math.min(c.getGreen() + 100, 255), Math.min(c.getBlue() + 100,255), 255));
-                }
-                target_.draw_tile(g, i, j);
-            }
+        Color moc = target_.turn_color();
+        return new Color(Math.min(moc.getRed() + 100, 255),
+                         Math.min(moc.getGreen() + 100, 255),
+                         Math.min(moc.getBlue() + 100,255),
+                         255);
     }
     
 }//class JoueDeuxHumains
 	
 
-class ColorerCase extends State
+class ColorerCase extends MouseOverState
 {
     public ColorerCase(Board target)
     {
         super(target);
     }
+    
     public void process_event(MouseEvent e)
     {
         Object[] options = {"Red","Blue"};
@@ -122,39 +139,13 @@ class ColorerCase extends State
             target_.next_turn();
         }
     }
-    public void paintComponent(Graphics g)
+
+    protected Color mouseover_color()
     {
-        g.setColor(Color.BLACK);
-        target_.fillRect(0,0, 10000, 10000, g);
-        int x = 0;
-        int y = 0;
-        final Point mousePos = target_.getMousePosition();
-        Font font = new Font("Serif", Font.BOLD, params_.tileSize() );
-        g.setFont(font);
-		
-        for(int i = 0 ; i < params_.matrixSize() ; ++i)
-        {
-            for(int j = 0 ; j < params_.matrixSize() ; ++j)
-            {
-                g.setColor(target_.get_tile(i, j).getColor());
-                if(mousePos != null
-                   && ((x = mousePos.x / params_.comprehensiveTileSize()) == i)
-                   && ((y = mousePos.y / params_.comprehensiveTileSize()) == j)
-                   && target_.coordinates_are_valid(x,y)
-                   && target_.get_tile(x, y).isEmpty())
-                {
-                    g.setColor(new Color(200,200,200,100));
-                }
-                g.fillRect(i*params_.tileSize() + params_.borderSize() * i, j*params_.tileSize() + params_.borderSize() * j, params_.tileSize(), params_.tileSize());
-                if(target_.get_tile(i,j).isStarTile())
-                {
-                    g.setColor(Color.BLACK);
-                    g.drawString("*",i * params_.comprehensiveTileSize() + params_.tileSize() / 3, j*params_.comprehensiveTileSize() + params_.tileSize() / 1);
-                }
-            }
-        }
+        return new Color(200,200,200,100);
     }
-}
+
+}//class ColorerCase
 
 
 class AfficheComposante extends State
