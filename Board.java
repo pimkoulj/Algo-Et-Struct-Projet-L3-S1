@@ -81,7 +81,7 @@ class Board extends JPanel implements MouseListener
 	 
     public Tile get_tile(int x, int y)
     {
-        return(matrix_.get(x,y));
+        return matrix_.get(x,y);
     }
 	
     public Tile tile(Coordinate c)
@@ -170,43 +170,33 @@ class Board extends JPanel implements MouseListener
     {
         return nbEtoiles(coord.x(), coord.y());
     }
+
+    //#############################################################
+    //###################### graphical stuff ######################
+    //###                                                       ###
 	
     public void paintComponent(Graphics g)
     {
         g.setFont(params_.star_font());
         state_.paintComponent(g);
-        //~ Color c = turnColor();
-        //~ g.setColor(Color.WHITE);
-      
-        //~ g.fillRect(0,0, 10000, 10000);
-        //~ int x;
-        //~ int y;
-        //~ final Point mousePos = this.getMousePosition();
-        //~ Font font = new Font("Serif", Font.BOLD, params_.tileSize() );
-        //~ g.setFont(font);
-		
-        //~ for(int i = 0 ; i < matrix_.size() ; ++i)
-        //~ {
-        //~ for(int j = 0 ; j < matrix_.size() ; ++j)
-        //~ {
-        //~ g.setColor(matrix_.get(i, j).getColor());
-        //~ if(mousePos != null 
-        //~ && ((x = mousePos.x / params_.comprehensiveTileSize()) == i)
-        //~ && ((y = mousePos.y / params_.comprehensiveTileSize()) == j) 
-        //~ & matrix_.hasNeighbour(c,x,y) 
-        //~ && matrix_.get(x,y).getColor() == Color.WHITE) 	
-        //~ {
-        //~ g.setColor(turn%2 == 0 ? Color.RED : Color.BLUE);
-        //~ }
-        //~ g.fillRect(i*params_.tileSize() + params_.borderSize() * i, j*params_.tileSize() + params_.borderSize() * j, params_.tileSize(), params_.tileSize());
-        //~ if(matrix_.get(i,j).isStarTile())
-        //~ {
-        //~ g.setColor(Color.BLACK);
-        //~ g.drawString("*",i * params_.comprehensiveTileSize() + params_.tileSize() / 3, j*params_.comprehensiveTileSize() + params_.tileSize() / 1);
-        //~ }
-        //~ }
-        //~ }
+    }
 
+    public void drawTile(Graphics g, int xval, int yval)
+    {
+        g.fillRect(
+            xval * params_.tileSize() + params_.borderSize() * xval,
+            yval * params_.tileSize() + params_.borderSize() * yval,
+            params_.tileSize(),
+            params_.tileSize() );//drawing the background
+        
+        if(matrix_.get(xval, yval).isStarTile())//draw a star, if needed
+        {
+            g.setColor(Color.BLACK);
+            g.drawString(
+                "*",
+                xval * params_.comprehensiveTileSize() + params_.tileSize() / 3,
+                yval * params_.comprehensiveTileSize() + params_.tileSize());
+        }
     }
 	 
     public void mousePressed(MouseEvent e)

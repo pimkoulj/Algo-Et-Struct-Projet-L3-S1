@@ -68,7 +68,6 @@ class JoueDeuxHumains extends State
         final Point mousePos = target_.getMousePosition();
 		
         for(int i = 0 ; i < params_.matrixSize() ; ++i)
-        {
             for(int j = 0 ; j < params_.matrixSize() ; ++j)
             {
                 g.setColor(target_.get_tile(i, j).getColor());
@@ -81,16 +80,11 @@ class JoueDeuxHumains extends State
                     Color c = target_.turnColor();
                     g.setColor(new Color(Math.min(c.getRed() + 100, 255) ,Math.min(c.getGreen() + 100, 255), Math.min(c.getBlue() + 100,255), 255));
                 }
-                g.fillRect(i*params_.tileSize() + params_.borderSize() * i, j*params_.tileSize() + params_.borderSize() * j, params_.tileSize(), params_.tileSize());
-                if(target_.get_tile(i,j).isStarTile())
-                {
-                    g.setColor(Color.BLACK);
-                    g.drawString("*",i * params_.comprehensiveTileSize() + params_.tileSize() / 3, j*params_.comprehensiveTileSize() + params_.tileSize() / 1);
-                }
+                target_.drawTile(g, i, j);
             }
-        }
     }
-}
+    
+}//class JoueDeuxHumains
 	
 
 class ColorerCase extends State
