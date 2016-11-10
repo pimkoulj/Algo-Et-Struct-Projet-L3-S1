@@ -207,6 +207,8 @@ class RelierCasesMin extends State
     private Coordinate destination_;
     private int clicked_;
     private int[][] tab_;
+    private ArrayList<Coordinate> start_;
+    private ArrayList<Coordinate> destination_; 
 	
     public RelierCasesMin(Board target)
     {
