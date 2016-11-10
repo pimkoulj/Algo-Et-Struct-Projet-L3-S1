@@ -47,7 +47,26 @@ class Board extends JPanel implements MouseListener
     //#########################################################
     //################### pseudo getters ######################
     //###                                                   ###
-	
+    
+    public Pair< ArrayList<Coordinate> > composantes(Coordinate ori, Coordinate dest)
+    {
+        Pair< ArrayList<Coordinate> > result = new Pair< ArrayList<Coordinate> >(
+            new ArrayList<Coordinate>(),
+            new ArrayList<Coordinate>() );
+        
+        Tile oriPere = matrix_.get(ori.x(), ori.y()).representant();
+        Tile destPere = matrix_.get(dest.x(), dest.y()).representant();
+        
+        for(int i = 0; i < params_.matrixSize(); ++i)
+            for(int j = 0; j < params_.matrixSize(); ++j)
+                if( matrix_.get(i, j).memeClasse(oriPere))
+                    result.first.add( new Coordinate(i, j) );
+                else if( matrix_.get(i, j).memeClasse(destPere))
+                    result.second.add( new Coordinate(i, j));
+        
+        return result;
+    }
+
     public Coordinate locate(MouseEvent e)
     {
         return new Coordinate(

@@ -16,7 +16,7 @@ public class Fenetre extends JFrame
         GameParameters parameters = new GameParameters();
         parameters.setBorderSize(5);
         parameters.setStarCardinal(3);
-        parameters.setTileSize(50);
+        parameters.setTileSize(60);
 
         Board gameBoard = new Board(parameters);
 
@@ -28,9 +28,10 @@ public class Fenetre extends JFrame
 		Container pane = this;
             
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
+
+        int nb_buttons = 8;
         menu = new JMenuBar();
-        Dimension button_size = new Dimension(200,70);
+        Dimension button_size = new Dimension(200,parameters.boardSize()/nb_buttons);
         StateSwitchingButton b1 = new StateSwitchingButton("ColorerCase", new ColorerCase(gameBoard));
         b1.setPreferredSize(button_size);
         JButton b2 = new StateSwitchingButton("AfficheComposante", new AfficheComposante(gameBoard));

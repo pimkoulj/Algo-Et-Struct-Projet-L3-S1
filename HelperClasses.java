@@ -30,7 +30,7 @@ class GameParameters
     public int tileSize() { return tile_size_; }
     public int borderSize() {return border_size_; }
     public int comprehensiveTileSize() { return border_size_ + tile_size_; }
-    public int boardSize() { return (border_size_ + tile_size_) * matrix_size_;}
+    public int boardSize() { return comprehensiveTileSize() * matrix_size_;}
     public int tileCardinal() { return matrix_size_ * matrix_size_; }
 
     public Font star_font() { return star_font_; }
@@ -64,5 +64,23 @@ class Coordinate
 	
     public int x() { return x_; }
     public int y() { return y_; }
+}
+
+class Pair<T>
+{
+    public T first;
+    public T second;
+
+    public Pair(T f, T s)
+    {
+        first = f;
+        second = s;
+    }
+
+    public void tie(T a, T b)
+    {
+        a = first;
+        b = second;
+    }
 }
 

@@ -24,7 +24,7 @@ class Tile
     {
         nb_fils = nb;
     }
-	
+
     public void setPere(Tile tile)
     {
         pere = tile;

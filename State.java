@@ -185,7 +185,14 @@ class AfficheComposante extends State
             for(int j = 0 ; j < params_.matrixSize() ; ++j)
             {
                 g.setColor(target_.get_tile(i, j).getColor());
-                target_.fillRect(i*params_.tileSize() + params_.borderSize() * i, j*params_.tileSize() + params_.borderSize() * j, params_.tileSize(), params_.tileSize(), g);
+                //target_.fillRect(i*params_.tileSize() + params_.borderSize() * i, j*params_.tileSize() + params_.borderSize() * j, params_.tileSize(), params_.tileSize(), g);
+                target_.fillRect(
+                    i*params_.comprehensiveTileSize(),
+                    j*params_.comprehensiveTileSize(),
+                    params_.tileSize(),
+                    params_.tileSize(),
+                    g);
+
                 if(target_.get_tile(i,j).isStarTile())
                 {
                     g.setColor(Color.BLACK);
@@ -201,13 +208,16 @@ class AfficheComposante extends State
     }
 }
 
+
 class RelierCasesMin extends State
 {
-    private Coordinate origine_;
-    private Coordinate destination_;
     private int clicked_;
     private int[][] tab_;
-    private ArrayList<Coordinate> start_;
+
+    Coordinate case_origine_;
+    Coordinate case_destination_;
+
+    private ArrayList<Coordinate> origine_;
     private ArrayList<Coordinate> destination_; 
 	
     public RelierCasesMin(Board target)
@@ -215,45 +225,105 @@ class RelierCasesMin extends State
         super(target);
         clicked_ = 0;
         tab_ = new int[params_.matrixSize()][params_.matrixSize()];
+        origine_ = new ArrayList<Coordinate>();
+        destination_ = new ArrayList<Coordinate>();
     }
 	
     public void reset()
     {
+        origine_.clear();
+        destination_.clear();
         clicked_ = 0;
     }
     public void process_event(MouseEvent e)
     {
         if(clicked_ == 0)
         {
-            origine_ = target_.locate(e);
-            if(!target_.tile(origine_).isEmpty())
-                ++clicked_;
+            handle_first_click(e);
         }
         else if(clicked_ == 1)
         {
-            destination_ = target_.locate(e);
-            if(target_.tile(origine_).getColor() == target_.tile(destination_).getColor())
+            case_destination_ = target_.locate(e);
+            if(target_.tile(case_origine_).getColor() == target_.tile(case_destination_).getColor())
             {
+                target_.composantes(case_origine_, case_destination_).tie(origine_, destination_);
                 find_path();
                 clicked_ = 2;
             }
-            else if(target_.tile(origine_).isEmpty())
-                clicked_ = 0;
-			
+            // else if(target_.tile(case_origine_).isEmpty())
+            // {
+            //     clicked_ = 0;
+            // }
         }
+        else//2 supposement
+        {
+            origine_.clear();
+            destination_.clear();
+            handle_first_click(e);
+        }
+    }
+
+    private void handle_first_click(MouseEvent e)
+    {
+        case_origine_ = target_.locate(e);
+        if(!target_.tile(case_origine_).isEmpty())
+            clicked_ = 1;
     }
     
     private void find_path()
     {
-        for(int i = 0 ; i < params_.matrixSize() ; ++i)
-        {
-            for(int j = 0 ; i < params_.matrixSize() ; ++j)
-            {
+        boolean path_was_found = false;
 
+        init_tab();
+        
+        int indice = 0;
+        int end;
+        int length = 1;
+        while(!path_was_found)
+        {
+            end = origine_.size();
+            for(; indice < end; ++indice)
+            {
+                int x = origine_[indice].x();
+                int y = origine_[indice].y();
+
+                for(int i = (x == 0 ? 0 : x - 1);
+                    i <= (x == params_.matrixSize() - 1 ? params_.matrixSize() - 1 : x + 1); ++i)
+                    for(int j = (y == 0 ? 0 : y - 1);
+                        j <= (y == params_.matrixSize() - 1 ? params_.matrixSize() - 1 : y + 1) ; ++j)
+                    {
+                        if(tab_[x][y] == 0)
+                        {
+                            tab_[x][y] = length;
+                            origine_.add(new Coordinate(x, y));
+                        }
+                        else if(tab_[x][y] == -1)
+                        {
+                            path_was_found = true;
+                            goto fin;
+                        }
+                    }
             }
+            ++length;
         }
     }
+
+    private void init_tab()
+    {
+        for(Coordinate el : origine_)
+            tab_[el.x()][el.y()] = 1;
+
+        for(Coordinate el : destination_)
+            tab[el.x()][el.y()] = -1;
+    }
     
+    private void wipe_tab()
+    {
+        for(int i = 0; i < params.matrixSize(); ++i)
+            for(int j = 0; j < params.matrixSize(); ++j)
+                tab[i][j] = 0;
+    }
+
     public void paintComponent(Graphics g)
     {
         draw_background(g);
