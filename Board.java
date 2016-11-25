@@ -14,6 +14,8 @@ import javax.swing.JOptionPane;
 
 class Board extends JPanel implements MouseListener
 {
+	private int redscore_;
+	private int bluescore_;
     private int turn;
     private Matrix matrix_;
     private GameParameters params_;
@@ -31,6 +33,8 @@ class Board extends JPanel implements MouseListener
     {
         params_ = params;
         turn = 0;
+        redscore_ = 0;
+        bluescore_ = 0;
         matrix_ = new Matrix(params_.matrixSize());
         red_star_tiles = new ArrayList<int[]>();
         blue_star_tiles = new ArrayList<int[]>();
@@ -175,6 +179,8 @@ class Board extends JPanel implements MouseListener
                 if(matrix_.get(tmp[0], tmp[1]).memeClasse(matrix_.get(x,y)))
                     ++ret;
             }
+            if(ret > redscore_)
+				redscore_ = ret;
         }
         else if(matrix_.get(x, y).getColor() == Color.BLUE)
         {
@@ -183,6 +189,8 @@ class Board extends JPanel implements MouseListener
                 if(matrix_.get(tmp[0], tmp[1]).memeClasse(matrix_.get(x,y)))
                     ++ret;
             }
+            if(ret > bluescore_)
+				bluescore_ = ret;
         }
         return ret;
     }
@@ -195,6 +203,18 @@ class Board extends JPanel implements MouseListener
     //#############################################################
     //###################### graphical stuff ######################
     //###                                                       ###
+	
+	public void checkwin(int x, int y)
+	{
+	
+	        if(nb_etoiles(x,y) == params_.starCardinal())
+            {
+                JOptionPane.showMessageDialog(this, 
+                                              (get_tile(x,y).getColor() == Color.RED ? "Rouge a gagné !" : "Bleu a gagné !"),
+                                              " Fin du game",
+                                              JOptionPane.INFORMATION_MESSAGE);
+            }
+	}
 	
     public void paintComponent(Graphics g)
     {
@@ -258,12 +278,14 @@ class Board extends JPanel implements MouseListener
             while(matrix_.get(tmp_x = rng.nextInt(matrix_.size()), tmp_y = rng.nextInt(matrix_.size())) != null){}
 			
             add_red_star_tile(tmp_x, tmp_y);
+            checkwin(tmp_x, tmp_y);
         }
         for(int i = 0 ; i < params_.starCardinal() ; ++i)
         {
             while(matrix_.get(tmp_x = rng.nextInt(matrix_.size()), tmp_y = rng.nextInt(matrix_.size())) != null){}
 			
             add_blue_star_tile(tmp_x, tmp_y);
+            checkwin(tmp_x, tmp_y);
         }
     }
 

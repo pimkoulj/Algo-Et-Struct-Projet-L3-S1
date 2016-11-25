@@ -40,7 +40,7 @@ public class Fenetre extends JFrame
         b3.setPreferredSize(button_size);
         JButton b4 = new JButton("relierCasesMin");
         b4.setPreferredSize(button_size);
-        JButton b5 = new JButton("nombreEtoiles");
+        JButton b5 = new StateSwitchingButton("nombreEtoiles", new NombreEtoiles(gameBoard));
         b5.setPreferredSize(button_size);
         JButton b6 = new JButton("afficheScores");
         b6.setPreferredSize(button_size);

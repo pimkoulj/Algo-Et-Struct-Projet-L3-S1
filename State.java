@@ -84,15 +84,8 @@ class JoueDeuxHumains extends MouseOverState
         if(target_.coordinates_are_valid(click_pos) && target_.tile(click_pos).isEmpty())
         {
             target_.colorise_tile(click_pos, target_.turn_color());
-            if(target_.nb_etoiles(click_pos) == params_.starCardinal())
-            {
-                JOptionPane.showMessageDialog(
-                    target_, 
-                    (target_.tile(click_pos).getColor() == Color.RED ? "Rouge a gagné !" : "Bleu a gagné !"),
-                    " Fin du game",
-                    JOptionPane.INFORMATION_MESSAGE);
-            }
             target_.next_turn();
+            target_.checkwin(click_pos.x(),click_pos.y());
         }
     }
 
@@ -134,14 +127,8 @@ class ColorerCase extends MouseOverState
         if(target_.coordinates_are_valid(x,y) && target_.get_tile(x, y).isEmpty())
         {
             target_.set_tile_color(x,y,c);
-            if(target_.nb_etoiles(x,y) == params_.starCardinal())
-            {
-                JOptionPane.showMessageDialog(target_, 
-                                              (target_.get_tile(x,y).getColor() == Color.RED ? "Rouge a gagné !" : "Bleu a gagné !"),
-                                              " Fin du game",
-                                              JOptionPane.INFORMATION_MESSAGE);
-            }
-            target_.next_turn();
+			target_.next_turn();
+			target_.checkwin(x,y);
         }
     }
 
@@ -152,6 +139,28 @@ class ColorerCase extends MouseOverState
 
 }//class ColorerCase
 
+class NombreEtoiles extends MouseOverState
+{
+    public NombreEtoiles(Board target)
+    {
+        super(target);
+    }
+    
+    public void process_event(MouseEvent e)
+    {
+        int x = e.getX() / (params_.tileSize() + params_.borderSize());
+        int y = e.getY() / (params_.tileSize() + params_.borderSize());
+        JOptionPane.showMessageDialog(
+        target_,
+        "Cette composante possède " + target_.nb_etoiles(x,y) + " cases étoiles");    
+    }
+
+    protected Color mouseover_color()
+    {
+        return new Color(200,200,200,100);
+    }
+
+}
 
 class AfficheComposante extends State
 {
@@ -209,135 +218,135 @@ class AfficheComposante extends State
 }
 
 
-class RelierCasesMin extends State
-{
-    private int clicked_;
-    private int[][] tab_;
-
-    Coordinate case_origine_;
-    Coordinate case_destination_;
-
-    private ArrayList<Coordinate> origine_;
-    private ArrayList<Coordinate> destination_; 
-	
-    public RelierCasesMin(Board target)
-    {
-        super(target);
-        clicked_ = 0;
-        tab_ = new int[params_.matrixSize()][params_.matrixSize()];
-        origine_ = new ArrayList<Coordinate>();
-        destination_ = new ArrayList<Coordinate>();
-    }
-	
-    public void reset()
-    {
-        origine_.clear();
-        destination_.clear();
-        clicked_ = 0;
-    }
-    public void process_event(MouseEvent e)
-    {
-        if(clicked_ == 0)
-        {
-            handle_first_click(e);
-        }
-        else if(clicked_ == 1)
-        {
-            case_destination_ = target_.locate(e);
-            if(target_.tile(case_origine_).getColor() == target_.tile(case_destination_).getColor())
-            {
-                target_.composantes(case_origine_, case_destination_).tie(origine_, destination_);
-                find_path();
-                clicked_ = 2;
-            }
-            // else if(target_.tile(case_origine_).isEmpty())
-            // {
-            //     clicked_ = 0;
-            // }
-        }
-        else//2 supposement
-        {
-            origine_.clear();
-            destination_.clear();
-            handle_first_click(e);
-        }
-    }
-
-    private void handle_first_click(MouseEvent e)
-    {
-        case_origine_ = target_.locate(e);
-        if(!target_.tile(case_origine_).isEmpty())
-            clicked_ = 1;
-    }
-    
-    private void find_path()
-    {
-        boolean path_was_found = false;
-
-        init_tab();
-        
-        int indice = 0;
-        int end;
-        int length = 1;
-        while(!path_was_found)
-        {
-            end = origine_.size();
-            for(; indice < end; ++indice)
-            {
-                int x = origine_[indice].x();
-                int y = origine_[indice].y();
-
-                for(int i = (x == 0 ? 0 : x - 1);
-                    i <= (x == params_.matrixSize() - 1 ? params_.matrixSize() - 1 : x + 1); ++i)
-                    for(int j = (y == 0 ? 0 : y - 1);
-                        j <= (y == params_.matrixSize() - 1 ? params_.matrixSize() - 1 : y + 1) ; ++j)
-                    {
-                        if(tab_[x][y] == 0)
-                        {
-                            tab_[x][y] = length;
-                            origine_.add(new Coordinate(x, y));
-                        }
-                        else if(tab_[x][y] == -1)
-                        {
-                            path_was_found = true;
-                            goto fin;
-                        }
-                    }
-            }
-            ++length;
-        }
-    }
-
-    private void init_tab()
-    {
-        for(Coordinate el : origine_)
-            tab_[el.x()][el.y()] = 1;
-
-        for(Coordinate el : destination_)
-            tab[el.x()][el.y()] = -1;
-    }
-    
-    private void wipe_tab()
-    {
-        for(int i = 0; i < params.matrixSize(); ++i)
-            for(int j = 0; j < params.matrixSize(); ++j)
-                tab[i][j] = 0;
-    }
-
-    public void paintComponent(Graphics g)
-    {
-        draw_background(g);
-        
-        Color greyed = new Color(0,0,0,180);
-        final Point mousePos = target_.getMousePosition();
-        Font font = new Font("Serif", Font.BOLD, params_.tileSize() );
-        g.setFont(font);
-        for(int i = 0 ; i < params_.matrixSize() ; ++i)
-        {
-            for(int j = 0 ; j < params_.matrixSize() ; ++j)
-            {
-                
-            }
-        }
-    }
-}
+//~ class RelierCasesMin extends State
+//~ {
+    //~ private int clicked_;
+    //~ private int[][] tab_;
+//~ 
+    //~ Coordinate case_origine_;
+    //~ Coordinate case_destination_;
+//~ 
+    //~ private ArrayList<Coordinate> origine_;
+    //~ private ArrayList<Coordinate> destination_; 
+	//~ 
+    //~ public RelierCasesMin(Board target)
+    //~ {
+        //~ super(target);
+        //~ clicked_ = 0;
+        //~ tab_ = new int[params_.matrixSize()][params_.matrixSize()];
+        //~ origine_ = new ArrayList<Coordinate>();
+        //~ destination_ = new ArrayList<Coordinate>();
+    //~ }
+	//~ 
+    //~ public void reset()
+    //~ {
+        //~ origine_.clear();
+        //~ destination_.clear();
+        //~ clicked_ = 0;
+    //~ }
+    //~ public void process_event(MouseEvent e)
+    //~ {
+        //~ if(clicked_ == 0)
+        //~ {
+            //~ handle_first_click(e);
+        //~ }
+        //~ else if(clicked_ == 1)
+        //~ {
+            //~ case_destination_ = target_.locate(e);
+            //~ if(target_.tile(case_origine_).getColor() == target_.tile(case_destination_).getColor())
+            //~ {
+                //~ target_.composantes(case_origine_, case_destination_).tie(origine_, destination_);
+                //~ find_path();
+                //~ clicked_ = 2;
+            //~ }
+            //~ // else if(target_.tile(case_origine_).isEmpty())
+            //~ // {
+            //~ //     clicked_ = 0;
+            //~ // }
+        //~ }
+        //~ else//2 supposement
+        //~ {
+            //~ origine_.clear();
+            //~ destination_.clear();
+            //~ handle_first_click(e);
+        //~ }
+    //~ }
+//~ 
+    //~ private void handle_first_click(MouseEvent e)
+    //~ {
+        //~ case_origine_ = target_.locate(e);
+        //~ if(!target_.tile(case_origine_).isEmpty())
+            //~ clicked_ = 1;
+    //~ }
+    //~ 
+    //~ private void find_path()
+    //~ {
+        //~ boolean path_was_found = false;
+//~ 
+        //~ init_tab();
+        //~ 
+        //~ int indice = 0;
+        //~ int end;
+        //~ int length = 1;
+        //~ while(!path_was_found)
+        //~ {
+            //~ end = origine_.size();
+            //~ for(; indice < end; ++indice)
+            //~ {
+                //~ int x = origine_[indice].x();
+                //~ int y = origine_[indice].y();
+//~ 
+                //~ for(int i = (x == 0 ? 0 : x - 1);
+                    //~ i <= (x == params_.matrixSize() - 1 ? params_.matrixSize() - 1 : x + 1); ++i)
+                    //~ for(int j = (y == 0 ? 0 : y - 1);
+                        //~ j <= (y == params_.matrixSize() - 1 ? params_.matrixSize() - 1 : y + 1) ; ++j)
+                    //~ {
+                        //~ if(tab_[x][y] == 0)
+                        //~ {
+                            //~ tab_[x][y] = length;
+                            //~ origine_.add(new Coordinate(x, y));
+                        //~ }
+                        //~ else if(tab_[x][y] == -1)
+                        //~ {
+                            //~ path_was_found = true;
+                            //~ goto fin;
+                        //~ }
+                    //~ }
+            //~ }
+            //~ ++length;
+        //~ }
+    //~ }
+//~ 
+    //~ private void init_tab()
+    //~ {
+        //~ for(Coordinate el : origine_)
+            //~ tab_[el.x()][el.y()] = 1;
+//~ 
+        //~ for(Coordinate el : destination_)
+            //~ tab[el.x()][el.y()] = -1;
+    //~ }
+    //~ 
+    //~ private void wipe_tab()
+    //~ {
+        //~ for(int i = 0; i < params.matrixSize(); ++i)
+            //~ for(int j = 0; j < params.matrixSize(); ++j)
+                //~ tab[i][j] = 0;
+    //~ }
+//~ 
+    //~ public void paintComponent(Graphics g)
+    //~ {
+        //~ draw_background(g);
+        //~ 
+        //~ Color greyed = new Color(0,0,0,180);
+        //~ final Point mousePos = target_.getMousePosition();
+        //~ Font font = new Font("Serif", Font.BOLD, params_.tileSize() );
+        //~ g.setFont(font);
+        //~ for(int i = 0 ; i < params_.matrixSize() ; ++i)
+        //~ {
+            //~ for(int j = 0 ; j < params_.matrixSize() ; ++j)
+            //~ {
+                //~ 
+            //~ }
+        //~ }
+    //~ }
+//~ }
