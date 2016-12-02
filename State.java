@@ -40,6 +40,7 @@ abstract class State
     }
 }
 
+
 abstract class MouseOverState extends State
 {
 
@@ -68,6 +69,24 @@ abstract class MouseOverState extends State
             }
     }
     protected abstract Color mouseover_color();
+}
+
+class AfficherScore extends State
+{
+	public AfficherScore(Board target)
+	{
+		super(target);
+	}
+	
+	public void	switch_to_state()
+    {
+        JOptionPane.showMessageDialog(
+        target_,
+        "Score de Rouge : " + target_.get_red_score() + "\n Score de Bleu : " + target_.get_blue_score());   
+    }
+    public void process_event(MouseEvent e){}
+    public void reset(){}
+    public void paintComponent(Graphics g){}
 }
 
 class JoueDeuxHumains extends MouseOverState
@@ -139,6 +158,40 @@ class ColorerCase extends MouseOverState
 
 }//class ColorerCase
 
+class RelieComposantes extends MouseOverState
+{
+    public RelieComposantes(Board target)
+    {
+        super(target);
+    }
+    
+    public void process_event(MouseEvent e)
+    {
+		Coordinate tmp = target_.locate(e);
+        Object[] options = {"Red","Blue"};
+        int n = JOptionPane.showOptionDialog(
+            target_,
+            "selectionnez couleur ?",
+            "Question",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE,
+            null,
+            options,
+            options[0]);
+        Color c = (n == 0) ? Color.RED : Color.BLUE;
+        boolean reliecomposantes = target_.relie_composantes(tmp, c);
+		JOptionPane.showMessageDialog(
+        target_,
+        (reliecomposantes ? "Oui, colorer cette case relierait deux composantes" : "Non, colorer cette case ne relireait pas deux composantes"));  
+    }
+
+    protected Color mouseover_color()
+    {
+        return new Color(200,200,200,100);
+    }
+
+}//class ColorerCase
+
 class NombreEtoiles extends MouseOverState
 {
     public NombreEtoiles(Board target)
@@ -187,14 +240,12 @@ class AfficheComposante extends State
         draw_background(g);
         Color greyed = new Color(0,0,0,180);
         final Point mousePos = target_.getMousePosition();
-        Font font = new Font("Serif", Font.BOLD, params_.tileSize() );
-        g.setFont(font);
+        g.setFont(params_.star_font());
         for(int i = 0 ; i < params_.matrixSize() ; ++i)
         {
             for(int j = 0 ; j < params_.matrixSize() ; ++j)
             {
                 g.setColor(target_.get_tile(i, j).getColor());
-                //target_.fillRect(i*params_.tileSize() + params_.borderSize() * i, j*params_.tileSize() + params_.borderSize() * j, params_.tileSize(), params_.tileSize(), g);
                 target_.fillRect(
                     i*params_.comprehensiveTileSize(),
                     j*params_.comprehensiveTileSize(),

@@ -58,6 +58,24 @@ class Matrix implements IMatrix
                 }
     }
     
+    public boolean relie_composantes(int x, int y, Color c)
+    {
+		boolean ret = false;
+		Tile tmp1 = get(x,y).representant();
+		Tile tmp2 = get(x,y).representant();
+		for(int i = (x == 0 ? 0 : x - 1); i <= (x == size() - 1 ? size() - 1 : x + 1) ; ++i)
+            for(int j = (y == 0 ? 0 : y - 1); j <= (y == size() - 1 ? size() - 1 : y + 1) ; ++j)
+                {
+					if(get(i,j).getColor() == c && i != x && j != y )
+						tmp2 = get(i,j).representant();
+					if(i != x && j != y && tmp1 != tmp2)
+						ret = true;
+					if(get(x,y).getColor() == c && i != x && j != y )
+						tmp1 = get(i,j).representant();
+				}
+		return(ret);
+	}
+    
     public void afficher()
     {
         for(int i = 0 ; i < tab_.length ; ++i)

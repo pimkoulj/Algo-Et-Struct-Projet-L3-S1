@@ -42,9 +42,9 @@ public class Fenetre extends JFrame
         b4.setPreferredSize(button_size);
         JButton b5 = new StateSwitchingButton("nombreEtoiles", new NombreEtoiles(gameBoard));
         b5.setPreferredSize(button_size);
-        JButton b6 = new JButton("afficheScores");
+        JButton b6 = new StateSwitchingButton("afficheScores", new AfficherScore(gameBoard));
         b6.setPreferredSize(button_size);
-        JButton b7 = new JButton("relierComposantes");
+        JButton b7 = new StateSwitchingButton("relieComposantes", new RelieComposantes(gameBoard));
         b7.setPreferredSize(button_size);
          StateSwitchingButton b8 = new  StateSwitchingButton("joueDeuxHumains", new JoueDeuxHumains(gameBoard));
         b8.setPreferredSize(button_size);
