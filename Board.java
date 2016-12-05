@@ -71,6 +71,19 @@ class Board extends JPanel implements MouseListener
         return result;
     }
 
+    public ArrayList<Coordinate> composante(Coordinate ori)
+    {
+        ArrayList<Coordinate> result = new ArrayList<Coordinate>();
+        
+        Tile oriPere = matrix_.get(ori.x(), ori.y()).representant();
+        
+        for(int i = 0; i < params_.matrixSize(); ++i)
+            for(int j = 0; j < params_.matrixSize(); ++j)
+                if( matrix_.get(i, j).memeClasse(oriPere))
+                    result.add( new Coordinate(i, j) );
+        return result;
+    }
+
     public Coordinate locate(MouseEvent e)
     {
         return new Coordinate(
@@ -91,18 +104,18 @@ class Board extends JPanel implements MouseListener
     {
         return locate(getMousePosition());
     }
-	 
+    
     public Tile get_tile(int x, int y)
     {
         return matrix_.get(x,y);
     }
 	
-	public int get_red_score()
+    public int get_red_score()
     {
         return redscore_;
     }
     
-	public int get_blue_score()
+    public int get_blue_score()
     {
         return bluescore_;
     }
