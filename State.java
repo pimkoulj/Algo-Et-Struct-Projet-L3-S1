@@ -291,7 +291,7 @@ class AfficheComposante extends State
 }
 
 
-class RelierCasesMin extends PaintState
+abstract class Pathfinder extends PaintState
 {
     private int clicked_;
     private int[][] tab_;
@@ -307,19 +307,22 @@ class RelierCasesMin extends PaintState
     public static final int ORIGINE = 0;
     public static final int OBSTACLE = -3;
     public static final int SAME_COLOR = -4;
-
+    
+    protected int path_length_;
+    protected boolean path_was_found_;
+    
     private Color color_origine()
     {
         return target_.tile(case_origine_).getColor();
     }
 	
-    public RelierCasesMin(Board target)
+    public Pathfinder(Board target)
     {
         super(target);
-        clicked_ = 0;
         tab_ = new int[params_.matrixSize()][params_.matrixSize()];
         origine_ = new ArrayList<Coordinate>();
         destination_ = new ArrayList<Coordinate>();
+        reset();
     }
 	
     public void reset()
@@ -327,6 +330,8 @@ class RelierCasesMin extends PaintState
         origine_.clear();
         destination_.clear();
         clicked_ = 0;
+        path_length_ = 1;
+        path_was_found_ = false;
     }
     public void process_event(MouseEvent e)
     {
@@ -337,7 +342,8 @@ class RelierCasesMin extends PaintState
         else if(clicked_ == 1)
         {
             case_destination_ = target_.locate(e);
-            if(target_.tile(case_origine_).getColor() == target_.tile(case_destination_).getColor())
+            if(target_.tile(case_origine_).getColor() == target_.tile(case_destination_).getColor() &&
+               !target_.tile(case_origine_).memeClasse(target_.tile(case_destination_)) )
             {
                 Pair< ArrayList<Coordinate> > oridest = target_.composantes(case_origine_, case_destination_);//.tie(origine_, destination_);
                 origine_ = oridest.first;
@@ -348,6 +354,8 @@ class RelierCasesMin extends PaintState
                 
                 find_path();
                 clicked_ = 2;
+                affichage();
+                reset();
             }
             // else if(target_.tile(case_origine_).isEmpty())
             // {
@@ -371,15 +379,14 @@ class RelierCasesMin extends PaintState
     
     private void find_path()
     {
-        boolean path_was_found = false;
+        path_was_found_ = false;
         boolean path_was_extended = true;
 
         init_tab();
         
         int end;
-        int length = 1;
 
-        while(!path_was_found && path_was_extended)
+        while(!path_was_found_ && path_was_extended)
         {
             ArrayList<Coordinate> exterieur = new ArrayList<Coordinate>();
             end = origine_.size();
@@ -396,7 +403,7 @@ class RelierCasesMin extends PaintState
                     {
                         if(tab_[i][j] == VIDE)//case vide, on l'ajoute au ruban extérieur
                         {
-                            tab_[i][j] = length;
+                            tab_[i][j] = path_length_;
                             exterieur.add(new Coordinate(i, j));
                             path_was_extended = true;
                         }
@@ -405,32 +412,24 @@ class RelierCasesMin extends PaintState
                             ArrayList<Coordinate> tmp = target_.composante(new Coordinate(i,j));
                             for(Coordinate coord : tmp)
                             {
-                                tab_[coord.x()][coord.y()] = length - 1;
+                                tab_[coord.x()][coord.y()] = path_length_ - 1;
                                 origine_.add(new Coordinate(coord.x(),coord.y()));
                                 ++end;
                             }
                         }
                         else if(tab_[i][j] == DESTINATION)
                         {
-                            path_was_found = true;
+                            path_was_found_ = true;
                         }
                     }
                 //System.out
             }
-            ++length;
+            ++path_length_;
             origine_ = exterieur;
             afficher_matrice();
         }
 
-        if(path_was_found)
-        {
-            length-=2;
-            JOptionPane.showMessageDialog(target_, "Plus court chemin trouvé : " + length);  
-        }
-        else
-        {
-            JOptionPane.showMessageDialog(target_, "Pas de chemin trouvé");  
-        }
+        path_length_-=2;
     }
 
     private void init_tab()
@@ -492,6 +491,8 @@ class RelierCasesMin extends PaintState
         }
     }
 
+    protected abstract void affichage();
+
     // public void paintComponent(Graphics g)
     // {
     //     draw_background(g);
@@ -508,4 +509,45 @@ class RelierCasesMin extends PaintState
     //         }
     //     }
     // }
+}
+
+class RelierCasesMin extends Pathfinder
+{
+    public RelierCasesMin(Board target)
+    {
+        super(target);
+    }
+
+    protected void affichage()
+    {
+        
+        if(path_was_found_)
+        {
+            JOptionPane.showMessageDialog(target_, "Plus court chemin trouvé : " + path_length_);  
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(target_, "Pas de chemin trouvé");  
+        }
+    }
+}
+
+class ExisteCheminCases extends Pathfinder
+{
+    public ExisteCheminCases(Board target)
+    {
+        super(target);
+    }
+
+    protected void affichage()
+    {
+        if(path_was_found_)
+        {
+            JOptionPane.showMessageDialog(target_, "Un chemin existe");  
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(target_, "Il n'existe pas de chemin");  
+        }
+    }
 }
