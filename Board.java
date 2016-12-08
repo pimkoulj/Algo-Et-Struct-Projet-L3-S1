@@ -14,8 +14,8 @@ import javax.swing.JOptionPane;
 
 class Board extends JPanel implements MouseListener
 {
-	private int redscore_;
-	private int bluescore_;
+    private int redscore_;
+    private int bluescore_;
     private int turn;
     private Matrix matrix_;
     private GameParameters params_;
@@ -161,10 +161,10 @@ class Board extends JPanel implements MouseListener
     //####################### tests #######################
     //###                                               ###
 
-	public boolean relie_composantes(Coordinate coord, Color c)
-	{
-		return(matrix_.relie_composantes(coord.x(), coord.y(), c));
-	}
+    public boolean relie_composantes(Coordinate coord, Color c)
+    {
+        return(matrix_.relie_composantes(coord.x(), coord.y(), c));
+    }
 
     public boolean has_neighbour(Color c, int x, int y)  //une fonction qui du coup n'est plus forcément utile vu qu'on peut colorer une case n'importe ou
     {
@@ -217,7 +217,7 @@ class Board extends JPanel implements MouseListener
                     ++ret;
             }
             //~ if(ret > bluescore_)
-				//~ bluescore_ = ret;
+            //~ bluescore_ = ret;
         }
         return ret;
     }
@@ -231,22 +231,22 @@ class Board extends JPanel implements MouseListener
     //###################### graphical stuff ######################
     //###                                                       ###
 	
-	public void checkwin(int x, int y)
-	{
+    public void checkwin(int x, int y)
+    {
 	
-			int tmp= nb_etoiles(x,y);
-	        if(tmp == params_.starCardinal())
-            {
-                JOptionPane.showMessageDialog(this, 
-                                              (get_tile(x,y).getColor() == Color.RED ? "Rouge a gagné !" : "Bleu a gagné !"),
-                                              " Fin du game",
-                                              JOptionPane.INFORMATION_MESSAGE);
-            }
-            if( get_tile(x,y).getColor() == Color.RED && tmp > redscore_)
-				redscore_ = tmp;
-			else if(get_tile(x,y).getColor() == Color.BLUE && tmp > bluescore_)
-				bluescore_ = tmp;
-	}
+        int tmp= nb_etoiles(x,y);
+        if(tmp == params_.starCardinal())
+        {
+            JOptionPane.showMessageDialog(this, 
+                                          (get_tile(x,y).getColor() == Color.RED ? "Rouge a gagné !" : "Bleu a gagné !"),
+                                          " Fin du game",
+                                          JOptionPane.INFORMATION_MESSAGE);
+        }
+        if( get_tile(x,y).getColor() == Color.RED && tmp > redscore_)
+            redscore_ = tmp;
+        else if(get_tile(x,y).getColor() == Color.BLUE && tmp > bluescore_)
+            bluescore_ = tmp;
+    }
 	
     public void paintComponent(Graphics g)
     {
