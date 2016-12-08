@@ -17,6 +17,7 @@ public class Fenetre extends JFrame
         parameters.setBorderSize(5);
         parameters.setStarCardinal(6);
         parameters.setTileSize(60);
+        parameters.setMatrixSize(10);
 
         Board gameBoard = new Board(parameters);
 

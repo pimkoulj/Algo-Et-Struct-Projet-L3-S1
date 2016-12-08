@@ -15,6 +15,11 @@ class GameParameters
         star_cardinal_ = rectifyStarCardinal(stars);
         tile_size_ = tsize;
         border_size_ = 5;
+        reset_star_font();
+    }
+
+    private void reset_star_font()
+    {
         star_font_ = new Font("Serif", Font.BOLD, tile_size_);
     }
 
@@ -37,7 +42,11 @@ class GameParameters
 
     public void setMatrixSize(int new_mat_size) { matrix_size_ = new_mat_size; }
     public void setStarCardinal(int new_star_card) { star_cardinal_ = rectifyStarCardinal(new_star_card);}
-    public void setTileSize(int new_tile_size) { tile_size_ = new_tile_size;}
+    public void setTileSize(int new_tile_size)
+    {
+        tile_size_ = new_tile_size;
+        reset_star_font();
+    }
     public void setBorderSize(int new_border_size) { border_size_ = new_border_size; }
 }
 
