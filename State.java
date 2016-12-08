@@ -293,14 +293,11 @@ class AfficheComposante extends State
 
 abstract class Pathfinder extends PaintState
 {
-    private int clicked_;
-    private int[][] tab_;
+    protected int clicked_;
+    protected int[][] tab_;
 
-    Coordinate case_origine_;
-    Coordinate case_destination_;
-
-    private ArrayList<Coordinate> origine_;
-    private ArrayList<Coordinate> destination_;
+    protected Coordinate case_origine_;
+    protected Coordinate case_destination_;
 
     public static final int VIDE = -1;
     public static final int DESTINATION = -2;
@@ -310,27 +307,19 @@ abstract class Pathfinder extends PaintState
     
     protected int path_length_;
     protected boolean path_was_found_;
-    
-    private Color color_origine()
-    {
-        return target_.tile(case_origine_).getColor();
-    }
+
+    protected abstract Color path_color();
 	
     public Pathfinder(Board target)
     {
         super(target);
         tab_ = new int[params_.matrixSize()][params_.matrixSize()];
-        origine_ = new ArrayList<Coordinate>();
-        destination_ = new ArrayList<Coordinate>();
         reset();
     }
 	
     public void reset()
     {
-        origine_.clear();
-        destination_.clear();
         clicked_ = 0;
-        path_length_ = 1;
         path_was_found_ = false;
     }
     public void process_event(MouseEvent e)
@@ -341,60 +330,52 @@ abstract class Pathfinder extends PaintState
         }
         else if(clicked_ == 1)
         {
-            case_destination_ = target_.locate(e);
-            if(target_.tile(case_origine_).getColor() == target_.tile(case_destination_).getColor() &&
-               !target_.tile(case_origine_).memeClasse(target_.tile(case_destination_)) )
-            {
-                Pair< ArrayList<Coordinate> > oridest = target_.composantes(case_origine_, case_destination_);//.tie(origine_, destination_);
-                origine_ = oridest.first;
-                destination_ = oridest.second;
+            handle_second_click(e);
 
-                System.out.println("origine : " + origine_);
-                System.out.println("destination : " + destination_);
-                
-                find_path();
-                clicked_ = 2;
-                affichage();
-                reset();
-            }
-            // else if(target_.tile(case_origine_).isEmpty())
-            // {
-            //     clicked_ = 0;
-            // }
         }
         else//2 supposement
         {
-            origine_.clear();
-            destination_.clear();
             handle_first_click(e);
         }
     }
 
-    private void handle_first_click(MouseEvent e)
-    {
-        case_origine_ = target_.locate(e);
-        if(!target_.tile(case_origine_).isEmpty())
-            clicked_ = 1;
-    }
+    protected abstract void handle_first_click(MouseEvent e);
+    protected abstract void handle_second_click(MouseEvent e);
     
-    private void find_path()
+    protected void find_path()
     {
-        path_was_found_ = false;
+
+        if (target_.tile(case_origine_).memeClasse(target_.tile(case_destination_)))//origine et destination sont déjà reliés
+        {
+            path_was_found_ = true;
+            path_length_ = 0;
+
+            return;
+        }
+        else
+            path_was_found_ = false;
+        path_length_ = 1;
+        
+        ArrayList<Coordinate> origine;
+        ArrayList<Coordinate> destination;
+        
+        Pair< ArrayList<Coordinate> > oridest = target_.composantes(case_origine_, case_destination_);//.tie(origine, destination);
+        origine = oridest.first;
+        destination = oridest.second;
+
         boolean path_was_extended = true;
 
-        init_tab();
+        init_tab(origine, destination);
         
-        int end;
-
         while(!path_was_found_ && path_was_extended)
         {
             ArrayList<Coordinate> exterieur = new ArrayList<Coordinate>();
-            end = origine_.size();
+            int end = origine.size();
             path_was_extended = false;
             for(int indice = 0; indice < end; ++indice)
             {
-                int x = origine_.get(indice).x();
-                int y = origine_.get(indice).y();
+                int x = origine.get(indice).x();
+                int y = origine.get(indice).y();
                 
                 for(int i = (x == 0 ? 0 : x - 1);
                     i <= (x == params_.matrixSize() - 1 ? params_.matrixSize() - 1 : x + 1); ++i)
@@ -413,7 +394,7 @@ abstract class Pathfinder extends PaintState
                             for(Coordinate coord : tmp)
                             {
                                 tab_[coord.x()][coord.y()] = path_length_ - 1;
-                                origine_.add(new Coordinate(coord.x(),coord.y()));
+                                origine.add(new Coordinate(coord.x(),coord.y()));
                                 ++end;
                             }
                         }
@@ -425,14 +406,14 @@ abstract class Pathfinder extends PaintState
                 //System.out
             }
             ++path_length_;
-            origine_ = exterieur;
+            origine = exterieur;
             afficher_matrice();
         }
 
         path_length_-=2;
     }
 
-    private void init_tab()
+    private void init_tab(ArrayList<Coordinate> origine, ArrayList<Coordinate> destination)
     {
         for( int i = 0; i < params_.matrixSize(); ++i )
             for(int j = 0; j < params_.matrixSize(); ++j)
@@ -440,17 +421,17 @@ abstract class Pathfinder extends PaintState
                 Color col = target_.get_tile(i, j).getColor();
                 if(col == Color.WHITE)
                     tab_[i][j] = VIDE;
-                else if(col == color_origine())
+                else if(col == path_color())
                     tab_[i][j] = SAME_COLOR;
                 else
                     tab_[i][j] = OBSTACLE;
 
             }
         
-        for(Coordinate el : origine_)
+        for(Coordinate el : origine)
             tab_[el.x()][el.y()] = ORIGINE;
 
-        for(Coordinate el : destination_)
+        for(Coordinate el : destination)
             tab_[el.x()][el.y()] = DESTINATION;
         
     }
@@ -490,25 +471,6 @@ abstract class Pathfinder extends PaintState
             System.out.println("|");
         }
     }
-
-    protected abstract void affichage();
-
-    // public void paintComponent(Graphics g)
-    // {
-    //     draw_background(g);
-        
-    //     Color greyed = new Color(0,0,0,180);
-    //     final Point mousePos = target_.getMousePosition();
-    //     Font font = new Font("Serif", Font.BOLD, params_.tileSize() );
-    //     g.setFont(font);
-    //     for(int i = 0 ; i < params_.matrixSize() ; ++i)
-    //     {
-    //         for(int j = 0 ; j < params_.matrixSize() ; ++j)
-    //         {
-                
-    //         }
-    //     }
-    // }
 }
 
 class RelierCasesMin extends Pathfinder
@@ -518,16 +480,34 @@ class RelierCasesMin extends Pathfinder
         super(target);
     }
 
-    protected void affichage()
+    protected Color path_color()
     {
-        
-        if(path_was_found_)
+        return target_.tile(case_origine_).getColor();
+    }
+
+    protected void handle_first_click(MouseEvent e)
+    {
+        case_origine_ = target_.locate(e);
+        if(!target_.tile(case_origine_).isEmpty())
+            clicked_ = 1;
+    }
+
+    protected void handle_second_click(MouseEvent e)
+    {
+        case_destination_ = target_.locate(e);
+        if(target_.tile(case_origine_).getColor() == target_.tile(case_destination_).getColor() )
         {
-            JOptionPane.showMessageDialog(target_, "Plus court chemin trouvé : " + path_length_);  
-        }
-        else
-        {
-            JOptionPane.showMessageDialog(target_, "Pas de chemin trouvé");  
+            clicked_ = 2;
+            reset();
+            find_path();
+            if(path_was_found_)
+            {
+                JOptionPane.showMessageDialog(target_, "Plus court chemin trouvé : " + path_length_);  
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(target_, "Pas de chemin trouvé");  
+            }
         }
     }
 }
@@ -539,8 +519,24 @@ class ExisteCheminCases extends Pathfinder
         super(target);
     }
 
-    protected void affichage()
+    protected Color path_color()
     {
+        return Color.RED;
+    }
+
+    protected void handle_first_click(MouseEvent e)
+    {
+        case_origine_ = target_.locate(e);
+        clicked_ = 1;
+    }
+
+    protected void handle_second_click(MouseEvent e)
+    {
+        case_destination_ = target_.locate(e);
+        clicked_ = 2;
+
+        find_path();
+        
         if(path_was_found_)
         {
             JOptionPane.showMessageDialog(target_, "Un chemin existe");  
@@ -549,5 +545,7 @@ class ExisteCheminCases extends Pathfinder
         {
             JOptionPane.showMessageDialog(target_, "Il n'existe pas de chemin");  
         }
+
+        reset();
     }
 }
