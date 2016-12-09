@@ -359,7 +359,7 @@ abstract class Pathfinder extends PaintState
         ArrayList<Coordinate> origine;
         ArrayList<Coordinate> destination;
         
-        Pair< ArrayList<Coordinate> > oridest = target_.composantes(case_origine_, case_destination_);//.tie(origine, destination);
+        Pair< ArrayList<Coordinate> > oridest = get_origin_and_dest_composantes();
         origine = oridest.first;
         destination = oridest.second;
 
@@ -412,6 +412,8 @@ abstract class Pathfinder extends PaintState
 
         path_length_-=2;
     }
+
+    protected abstract Pair< ArrayList<Coordinate> > get_origin_and_dest_composantes();
 
     private void init_tab(ArrayList<Coordinate> origine, ArrayList<Coordinate> destination)
     {
@@ -480,6 +482,12 @@ class RelierCasesMin extends Pathfinder
         super(target);
     }
 
+    protected Pair< ArrayList<Coordinate> > get_origin_and_dest_composantes()
+    {
+        return target_.composantes(case_origine_, case_destination_);//.tie(origine, destination);
+    }
+
+
     protected Color path_color()
     {
         return target_.tile(case_origine_).getColor();
@@ -514,13 +522,31 @@ class RelierCasesMin extends Pathfinder
 
 class ExisteCheminCases extends Pathfinder
 {
+    public static final int ROUGE = 0;
+    public static final int BLEU = 1;
+    
+    private int path_color_;
     public ExisteCheminCases(Board target)
     {
         super(target);
     }
 
+    protected Pair< ArrayList<Coordinate> > get_origin_and_dest_composantes()
+    {
+        if( target_.tile(case_origine_).getColor() == path_color())
+            return target_.composantes(case_origine_, case_destination_);//.tie(origine, destination);
+        ArrayList<Coordinate> tmp = new ArrayList<Coordinate>();
+        tmp.add(case_origine_);
+        return new Pair< ArrayList<Coordinate> >(
+            tmp,
+            target_.composante(case_destination_) );
+        
+    }
+
     protected Color path_color()
     {
+        if(path_color_ == BLEU)
+            return Color.BLUE;
         return Color.RED;
     }
 
@@ -535,15 +561,28 @@ class ExisteCheminCases extends Pathfinder
         case_destination_ = target_.locate(e);
         clicked_ = 2;
 
+        Object[] options = {"Red","Blue"};
+        int n = JOptionPane.showOptionDialog(
+            target_,
+            "selectionnez couleur ?",
+            "Question",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE,
+            null,
+            options,
+            options[0]);
+
+        path_color_ = n;
+
         find_path();
-        
+        String colorS = (path_color_ == BLEU) ? "bleu" : "rouge";
         if(path_was_found_)
         {
-            JOptionPane.showMessageDialog(target_, "Un chemin existe");  
+            JOptionPane.showMessageDialog(target_, "Un chemin " + colorS + " existe");  
         }
         else
         {
-            JOptionPane.showMessageDialog(target_, "Il n'existe pas de chemin");  
+            JOptionPane.showMessageDialog(target_, "Il n'existe pas de chemin " + colorS);  
         }
 
         reset();

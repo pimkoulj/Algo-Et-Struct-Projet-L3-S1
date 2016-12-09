@@ -1,4 +1,5 @@
-import java.awt.Color; 
+import java.awt.Color;
+import java.util.ArrayList;
 
 interface IMatrix
 {
@@ -58,23 +59,78 @@ class Matrix implements IMatrix
                 }
     }
     
-    public boolean relie_composantes(int x, int y, Color c)
+    // public boolean relie_composantes(int x, int y, Color c)
+    // {
+    //     boolean ret = false;
+    //     Tile tmp1 = get(x,y).representant();
+    //     Tile tmp2 = get(x,y).representant();
+    //     for(int i = (x == 0 ? 0 : x - 1); i <= (x == size() - 1 ? size() - 1 : x + 1) ; ++i)
+    //         for(int j = (y == 0 ? 0 : y - 1); j <= (y == size() - 1 ? size() - 1 : y + 1) ; ++j)
+    //         {
+    //             if(get(i,j).getColor() == c && i != x && j != y )
+    //                 tmp2 = get(i,j).representant();
+    //             if(i != x && j != y && tmp1 != tmp2)
+    //                 ret = true;
+    //             if(get(x,y).getColor() == c && i != x && j != y )
+    //                 tmp1 = get(i,j).representant();
+    //         }
+    //     return(ret);
+    // }
+
+    public boolean relie_composantes(int x, int y, Color color)
     {
-		boolean ret = false;
-		Tile tmp1 = get(x,y).representant();
-		Tile tmp2 = get(x,y).representant();
-		for(int i = (x == 0 ? 0 : x - 1); i <= (x == size() - 1 ? size() - 1 : x + 1) ; ++i)
-            for(int j = (y == 0 ? 0 : y - 1); j <= (y == size() - 1 ? size() - 1 : y + 1) ; ++j)
+        boolean first_rep_initialised = false;
+        Tile first_rep = new Tile();
+        for(Tile el : neighbours(x, y))
+        {
+            if(el.getColor() == color)
+                if(first_rep_initialised)
                 {
-					if(get(i,j).getColor() == c && i != x && j != y )
-						tmp2 = get(i,j).representant();
-					if(i != x && j != y && tmp1 != tmp2)
-						ret = true;
-					if(get(x,y).getColor() == c && i != x && j != y )
-						tmp1 = get(i,j).representant();
-				}
-		return(ret);
-	}
+                    if(!first_rep.memeClasse(el))
+                        return true;
+                }
+                else
+                {
+                    first_rep = el.representant();
+                    first_rep_initialised = true;
+                }
+        }
+        return false;
+    }
+
+    public ArrayList<Tile> neighbours(int x, int y)
+    {
+        ArrayList<Tile> result = new ArrayList<Tile>();
+        
+        if(x > 0)
+        {
+            result.add(get(x-1, y));
+            if(y > 0)
+            {
+                result.add(get(x-1, y-1));
+                result.add(get(x, y-1));
+            }
+            
+            if(y < size() -1)
+            {
+                result.add(get(x-1, y+1));
+                result.add(get(x, y+1));
+            }
+        }
+
+        if(x < size() -1)
+        {
+            result.add(get(x+1, y));
+            if(y > 0)
+            {
+                result.add(get(x+1, y-1));
+            }
+            if(y < size() -1)
+                result.add(get(x+1, y+1));
+        }
+        
+        return result;
+    }
     
     public void afficher()
     {
