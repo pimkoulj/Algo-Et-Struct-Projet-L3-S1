@@ -455,9 +455,9 @@ abstract class Pathfinder extends PaintState
 
         for(int i = 0; i < tab_.length; ++i)
         {
-            for(int j = 0; j < tab_.length; ++j)
-                System.out.print("|\t");
-            System.out.println("|");
+            // for(int j = 0; j < tab_.length; ++j)
+            //     System.out.print("|\t");
+            // System.out.println("|");
 
             for(int j = 0; j < tab_.length; ++j)
                 System.out.print("|\t");
@@ -520,27 +520,37 @@ class RelierCasesMin extends Pathfinder
     }
 }
 
-class ExisteCheminCases extends Pathfinder
+class ExisteCheminCases extends PaintState
 {
     public static final int ROUGE = 0;
     public static final int BLEU = 1;
+
+    protected Coordinate case_origine_;
+    protected Coordinate case_destination_;
+    private int clicked_;
     
     private int path_color_;
     public ExisteCheminCases(Board target)
     {
         super(target);
+        clicked_ = 0;
     }
 
-    protected Pair< ArrayList<Coordinate> > get_origin_and_dest_composantes()
+    public void process_event(MouseEvent e)
     {
-        if( target_.tile(case_origine_).getColor() == path_color())
-            return target_.composantes(case_origine_, case_destination_);//.tie(origine, destination);
-        ArrayList<Coordinate> tmp = new ArrayList<Coordinate>();
-        tmp.add(case_origine_);
-        return new Pair< ArrayList<Coordinate> >(
-            tmp,
-            target_.composante(case_destination_) );
-        
+        if(clicked_ == 0)
+        {
+            handle_first_click(e);
+        }
+        else if(clicked_ == 1)
+        {
+            handle_second_click(e);
+
+        }
+        else//2 supposement
+        {
+            handle_first_click(e);
+        }
     }
 
     protected Color path_color()
@@ -561,7 +571,7 @@ class ExisteCheminCases extends Pathfinder
         case_destination_ = target_.locate(e);
         clicked_ = 2;
 
-        Object[] options = {"Red","Blue"};
+        Object[] options = {"Rouge","Bleu"};
         int n = JOptionPane.showOptionDialog(
             target_,
             "selectionnez couleur ?",
@@ -574,9 +584,8 @@ class ExisteCheminCases extends Pathfinder
 
         path_color_ = n;
 
-        find_path();
         String colorS = (path_color_ == BLEU) ? "bleu" : "rouge";
-        if(path_was_found_)
+        if(target_.tile(case_origine_).memeClasse(target_.tile(case_destination_)) && target_.tile(case_origine_).getColor() == path_color())
         {
             JOptionPane.showMessageDialog(target_, "Un chemin " + colorS + " existe");  
         }
