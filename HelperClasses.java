@@ -28,7 +28,10 @@ class GameParameters
         this(10, 3, 50);
     }
     
-    private int rectifyStarCardinal(int star_card){return (star_card > tileCardinal()/ 2 ) ? tileCardinal()/2 : star_card;}
+    private int rectifyStarCardinal(int star_card)
+    {
+        return (star_card > tileCardinal()/ 2 ) ? tileCardinal()/2 : star_card;
+    }
 
     public int matrixSize() { return matrix_size_; }
     public int starCardinal() { return star_cardinal_; }

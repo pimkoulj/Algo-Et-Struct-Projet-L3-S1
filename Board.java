@@ -32,20 +32,9 @@ class Board extends JPanel implements MouseListener
     public Board(GameParameters params)
     {
         params_ = params;
-        turn = 0;
-        redscore_ = 0;
-        bluescore_ = 0;
-        matrix_ = new Matrix(params_.matrixSize());
-        red_star_tiles = new ArrayList<int[]>();
-        blue_star_tiles = new ArrayList<int[]>();
-        initialise_star_tiles();
-        
-        addMouseListener(this);
-
-        initialise_empty_tiles();
-        int comprehensive_size = params_.comprehensiveTileSize() * params_.matrixSize() - params_.borderSize();
-        super.setPreferredSize(new Dimension(comprehensive_size ,comprehensive_size ));
+        start_new_game();
         state_ = new ColorerCase(this);
+        addMouseListener(this);
     }
 
     //#########################################################
@@ -237,12 +226,14 @@ class Board extends JPanel implements MouseListener
         int tmp= nb_etoiles(x,y);
         if(tmp == params_.starCardinal())
         {
-            JOptionPane.showMessageDialog(this, 
-                                          (get_tile(x,y).getColor() == Color.RED ? "Rouge a gagné !" : "Bleu a gagné !"),
-                                          " Fin du game",
-                                          JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(
+                this, 
+                (get_tile(x,y).getColor() == Color.RED ? "Rouge a gagné !" : "Bleu a gagné !"),
+                " Fin du game",
+                JOptionPane.INFORMATION_MESSAGE);
+            start_new_game();
         }
-        if( get_tile(x,y).getColor() == Color.RED && tmp > redscore_)
+        else if( get_tile(x,y).getColor() == Color.RED && tmp > redscore_)
             redscore_ = tmp;
         else if(get_tile(x,y).getColor() == Color.BLUE && tmp > bluescore_)
             bluescore_ = tmp;
@@ -278,27 +269,48 @@ class Board extends JPanel implements MouseListener
 	 
     public void mousePressed(MouseEvent e)
     {
-        state_.process_event(e);
+        state_.process_event(e);        
     }
-    public void mouseReleased(MouseEvent e) {
+    public void mouseReleased(MouseEvent e)
+    {
  
     }
      
-    public void mouseEntered(MouseEvent e) {
+    public void mouseEntered(MouseEvent e)
+    {
+        
+    }
+     
+    public void mouseExited(MouseEvent e)
+    {
 
     }
      
-    public void mouseExited(MouseEvent e) {
+    public void mouseClicked(MouseEvent e)
+    {
 
     }
-     
-    public void mouseClicked(MouseEvent e) {
 
-    }
 
     //######################################################
     //########### private initialisation methods ###########
     //###                                                ###
+
+    private void start_new_game()
+    {
+        
+        turn = 0;
+        redscore_ = 0;
+        bluescore_ = 0;
+        matrix_ = new Matrix(params_.matrixSize());
+        red_star_tiles = new ArrayList<int[]>();
+        blue_star_tiles = new ArrayList<int[]>();
+        initialise_star_tiles();
+        
+        initialise_empty_tiles();
+        int comprehensive_size = params_.comprehensiveTileSize() * params_.matrixSize() - params_.borderSize();
+        super.setPreferredSize(new Dimension(comprehensive_size ,comprehensive_size ));
+    }
  
     private void initialise_star_tiles()
     {

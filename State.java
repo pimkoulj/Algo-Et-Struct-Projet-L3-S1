@@ -95,16 +95,16 @@ abstract class PaintState extends State
 
 class AfficherScore extends State
 {
-	public AfficherScore(Board target)
-	{
-		super(target);
-	}
+    public AfficherScore(Board target)
+    {
+        super(target);
+    }
 	
-	public void	switch_to_state()
+    public void	switch_to_state()
     {
         JOptionPane.showMessageDialog(
-        target_,
-        "Score de Rouge : " + target_.get_red_score() + "\n Score de Bleu : " + target_.get_blue_score());   
+            target_,
+            "Score de Rouge : " + target_.get_red_score() + "\n Score de Bleu : " + target_.get_blue_score());   
     }
     public void process_event(MouseEvent e){}
     public void reset(){}
@@ -401,7 +401,7 @@ abstract class Pathfinder extends PaintState
                 //System.out
             }
             origine = exterieur;
-            afficher_matrice();
+            //afficher_matrice();
         }
 
         path_length_-=1;

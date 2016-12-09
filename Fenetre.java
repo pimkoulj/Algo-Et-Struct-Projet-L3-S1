@@ -11,13 +11,13 @@ public class Fenetre extends JFrame
     
     public Fenetre()
     {             
-        this.setTitle("StarTile ep.II : the return of gelShampooing");
+        this.setTitle("JEU CONNEXION");
 
         GameParameters parameters = new GameParameters();
-        parameters.setBorderSize(5);
-        parameters.setStarCardinal(6);
-        parameters.setTileSize(60);
-        parameters.setMatrixSize(10);
+        parameters.setBorderSize(2);
+        parameters.setTileSize(30);
+        parameters.setMatrixSize(12);
+        parameters.setStarCardinal(3);
 
         Board gameBoard = new Board(parameters);
 
