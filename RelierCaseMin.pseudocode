@@ -1,0 +1,59 @@
+Fonction RelierCasesMin( Matrice mat, Case origine, Case destination ) : Entier
+Début
+|	Entier longueur_chemin <- 0
+|	
+|	Si( origine.memeClasse(destination) )
+|	Alors
+|	|	Renvoyer 0
+|	Finsi
+|	
+|	Booléen chemin_trouve <- Faux
+|	Booléen chemin_a_ete_etendu <- Vrai
+|	
+|	Case[] composante_origine <- mat.composante(origine)
+|	Case[] composante_destination <- mat.composante(destination)
+|	
+|	Entier[][] matrice_longueurs <- init_matrice_longueurs( mat, composante_origine, composante_destination )
+|	
+|	TantQue( ! chemin_trouve && chemin_a_ete_etendu )
+|	Faire
+|	|	Case[] composante_exterieure
+|	|	chemin_a_ete_etendu <- Faux
+|	|	++longueur_chemin
+|	|	Entier fin_origine <- composante_origine.taille()
+|	|	
+|	|	Pour i allant de 1 à fin_origine
+|	|	Faire
+|	|	|
+|	|	|	Case[] voisins <- fin_origine[i].voisins()
+|	|	|	PourTout v : voisins
+|	|	|	Faire
+|	|	|	|	Si( v = VIDE)
+|	|	|	|	Alors
+|	|	|	|	|	matrice_longueurs[v.x][v.y] <- longueur_chemin
+|	|	|	|	|	composante_exterieure.ajouter(v)
+|	|	|	|	|	chemin_a_ete_etendu = Vrai
+|	|	|	|	SinonSi( v = MEME_COULEUR )			
+|	|	|	|	Alors
+|	|	|	|	|	Case[] comp_v = mat.composante(v)
+|	|	|	|	|	PourTout elt : comp_v
+|	|	|	|	|	Faire
+|	|	|	|	|	|	matrice_longueurs[elt.x][elt.y] <- longueur_chemin - 1
+|	|	|	|	|	|	composante_origine.ajouter(elt)
+|	|	|	|	|	|	++fin_origine
+|	|	|	|	|	FinPour
+|	|	|	|	SinonSi( v = DESTINATION)
+|	|	|	|	Faire
+|	|	|	|	|	chemin_a_ete_trouve = Vrai
+|	|	|	|	Finsi
+|	|	|	FinPour
+|	|	FinPour
+|	|	composante_origine <- composante_exterieure
+|	FinTantQue
+|	Retourner longueur_chemin - 1
+Fin
+
+Méthode Case::memeClasse(Case autre) : Booléen
+Début
+	Retourner Classe() = autre.classe()
+Fin
